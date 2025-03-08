@@ -1,52 +1,74 @@
-name: Scheduled deploy
+name: CI
 
-on:
-  schedule:
-    - cron: '0 6 * * *'
-  workflow_dispatch:
+on: [push]
 
 jobs:
+  # ビルドを実行するジョブ
   build:
     name: build
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
+          cache: 'npm'
+
       - name: Install dependencies
-        run: npm install
-      - name: Run build
+        run: npm ci
+
+      - name: Build project
         run: npm run build
 
-  deploy:
-    name: deploy
-    runs-on: ubuntu-latest
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+  # テストを実行するジョブ
+  test:
+    name: Test
     needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Node.js and cache
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
           cache: 'npm'
-      - name: Install firebase-tools
-        run: npm install --save-dev firebase-tools
-      - name: Decode Firebase service account key
-        run: |
-          echo "${{ secrets.FIREBASE_KEY }}" | base64 -d > ./firebase-key.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/firebase-key.json" >> $GITHUB_ENV
-      - name: change space
-        run: ./node_modules/.bin/firebase use ${{ secrets.FIREBASE_PROJECT_ID }}
-      - name: Deploy to Firebase Hosting
-        run: |
-          ./node_modules/.bin/firebase deploy
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
-      - name: delete GOOGLE_APPLICATION_CREDENTIALS
-        run: rm $GOOGLE_APPLICATION_CREDENTIALS
-        if: ${{ always() }}
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+  # デプロイを実行するジョブ
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+
+      # secrets.FIREBASE_KEY にはFirebaseのサービスアカウントキーをbase64エンコードしたものを設定する
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          firebaseServiceAccount: '${{ secrets.FIREBASE_KEY }}'
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          channelId: live

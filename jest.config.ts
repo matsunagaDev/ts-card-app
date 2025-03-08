@@ -1,5 +1,22 @@
-import '@testing-library/jest-dom';
-import { config } from 'dotenv';
+import type { Config } from '@jest/types';
 
-// 環境変数を明示的に設定
-config({ path: '.env.test' });
+const config: Config.InitialOptions = {
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  transform: {
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+      },
+    ],
+  },
+  moduleNameMapper: {
+    '\\.(css|less)$': 'identity-obj-proxy',
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
+  testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
+};
+
+export default config;
