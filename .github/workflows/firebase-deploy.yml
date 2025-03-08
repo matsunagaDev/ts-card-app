@@ -68,7 +68,8 @@ jobs:
 
       # secrets.FIREBASE_SERVICE_ACCOUNT にはFirebaseのサービスアカウントキーをbase64エンコードしたものを設定する
       - name: Set up Firebase authentication
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > $HOME/service-account.json
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > $HOME/service-account.json
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
