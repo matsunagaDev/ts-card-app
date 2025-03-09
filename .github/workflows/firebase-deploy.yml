@@ -83,6 +83,7 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
+      # 他の記載方法
       # secrets.FIREBASE_SERVICE_ACCOUNT にはFirebaseのサービスアカウントキーをbase64エンコードしたものを設定する
       # - name: Deploy to Firebase Hosting
       #   uses: FirebaseExtended/action-hosting-deploy@v0
