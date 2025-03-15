@@ -4,7 +4,6 @@ import { Home } from './Home';
 import { Hoge } from './Hoge';
 import { Test } from './Test';
 import { Card } from './Card';
-import { Button } from '@chakra-ui/react';
 
 export const App = () => {
   return (
