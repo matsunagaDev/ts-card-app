@@ -17,6 +17,10 @@ const config: Config.InitialOptions = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
+  globals: {
+    TextEncoder: require('util').TextEncoder, // この記述でグローバル化してあげる必要あり
+    TextDecoder: require('util').TextDecoder,
+  },
 };
 
 export default config;
