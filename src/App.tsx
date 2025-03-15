@@ -1,4 +1,4 @@
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router';
+import { BrowserRouter, NavLink, Outlet, Route, Routes } from 'react-router';
 import './App.css';
 import { Home } from './Home';
 import { Hoge } from './Hoge';
@@ -19,8 +19,8 @@ export const App = () => {
         <Route path="card" element={<Card />}>
           <Route path="home" element={<Home />} />
           <Route path="hoge" element={<Hoge />} />
-
           <Route path="test" element={<Test />} />
+          <Route path=":id" element={<Outlet />} />
         </Route>
       </Routes>
     </BrowserRouter>
