@@ -1,13 +1,9 @@
 import type { Config } from 'jest';
-import '@testing-library/jest-dom';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 const config: Config = {
   verbose: true,
   preset: 'ts-jest',
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-fixed-jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',

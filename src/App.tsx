@@ -1,5 +1,4 @@
 import { BrowserRouter, NavLink, Outlet, Route, Routes } from 'react-router';
-import './App.css';
 import { Home } from './Home';
 import { Hoge } from './Hoge';
 import { Test } from './Test';

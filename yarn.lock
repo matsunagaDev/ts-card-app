@@ -3331,7 +3331,7 @@ jest-each@^29.7.0:
     jest-util "^29.7.0"
     pretty-format "^29.7.0"
 
-jest-environment-jsdom@^29.7.0:
+jest-environment-jsdom@^29.7.0, jest-environment-jsdom@>=28.0.0:
   version "29.7.0"
   resolved "https://registry.npmjs.org/jest-environment-jsdom/-/jest-environment-jsdom-29.7.0.tgz"
   integrity sha512-k9iQbsf9OyOfdzWH8HDmrRT0gSIcX+FLNW7IQq94tFX0gynPwqDTW0Ho6iMVNjGz/nb+l/vW3dWM2bbLLpkbXA==
@@ -3356,6 +3356,11 @@ jest-environment-node@^29.7.0:
     "@types/node" "*"
     jest-mock "^29.7.0"
     jest-util "^29.7.0"
+
+jest-fixed-jsdom@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmjs.org/jest-fixed-jsdom/-/jest-fixed-jsdom-0.0.9.tgz"
+  integrity sha512-KPfqh2+sn5q2B+7LZktwDcwhCpOpUSue8a1I+BcixWLOQoEVyAjAGfH+IYZGoxZsziNojoHGRTC8xRbB1wDD4g==
 
 jest-get-type@^29.6.3:
   version "29.6.3"

@@ -1,5 +1,5 @@
 import { User } from '../domain/user';
-import { supabase } from '../utils/supabase.ts';
+import { supabase } from '../utils/supabase';
 
 export async function getUserSkillById(userId: string): Promise<User> {
   const { data, error } = await supabase

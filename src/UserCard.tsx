@@ -21,10 +21,10 @@ import {
   WrapItem,
   Stack,
 } from '@chakra-ui/react';
+import * as DOMPurify from 'dompurify';
 import { getUserSkillById } from './lib/userSkill';
 import { FaGithub, FaTwitter } from 'react-icons/fa';
 import { SiQiita } from 'react-icons/si';
-import DOMPurify from 'dompurify';
 
 export const UserCard = () => {
   const { id } = useParams();
