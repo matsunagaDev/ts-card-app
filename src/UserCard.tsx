@@ -98,7 +98,7 @@ export const UserCard = () => {
                 {/* 方法1: Chakra UIのdangerouslySetInnerHTML代替手段を使用 */}
                 <Text
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(user?.description || ''),
+                    __html: DOMPurify.default.sanitize(user?.description || ''),
                   }}
                   textAlign={'left'}
                 />
