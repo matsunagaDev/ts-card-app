@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import 'dotenv/config';
 
 // Create a single supabase client for interacting with your database
 const supabaseUrl = process.env.VITE_SUPABASE_URL as string;
