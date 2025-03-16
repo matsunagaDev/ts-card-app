@@ -3,7 +3,7 @@ import './App.css';
 import { Home } from './Home';
 import { Hoge } from './Hoge';
 import { Test } from './Test';
-import { Card } from './Card';
+import { UserCard } from './UserCard';
 
 export const App = () => {
   return (
@@ -15,11 +15,11 @@ export const App = () => {
       <NavLink to="/card/test">テスト</NavLink>
 
       <Routes>
-        <Route path="card" element={<Card />}>
+        <Route path="card" element={<UserCard />}>
+          <Route path=":id" element={<Outlet />} />
           <Route path="home" element={<Home />} />
           <Route path="hoge" element={<Hoge />} />
           <Route path="test" element={<Test />} />
-          <Route path=":id" element={<Outlet />} />
         </Route>
       </Routes>
     </BrowserRouter>

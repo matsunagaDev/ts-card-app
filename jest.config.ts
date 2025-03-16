@@ -1,26 +1,12 @@
-import type { Config } from '@jest/types';
+import '@testing-library/jest-dom';
+import * as dotenv from 'dotenv';
 
-const config: Config.InitialOptions = {
-  preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  transform: {
-    '^.+\\.(ts|tsx)$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.json',
-      },
-    ],
-  },
-  moduleNameMapper: {
-    '\\.(css|less)$': 'identity-obj-proxy',
-    '^@/(.*)$': '<rootDir>/src/$1',
-  },
-  testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
-  globals: {
-    TextEncoder: require('util').TextEncoder, // この記述でグローバル化してあげる必要あり
-    TextDecoder: require('util').TextDecoder,
-  },
-};
+dotenv.config();
 
-export default config;
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+if (!global.structuredClone) {
+  global.structuredClone = function structuredClone(objectToClone: any) {
+    if (objectToClone === undefined) return undefined;
+    return JSON.parse(JSON.stringify(objectToClone));
+  };
+}
