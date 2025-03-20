@@ -11,6 +11,7 @@
     "test": "jest --runInBand --detectOpenHandles --forceExit"
   },
   "dependencies": {
+    "@chakra-ui/button": "^2.1.0",
     "@chakra-ui/card": "^2.2.0",
     "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.10.6",

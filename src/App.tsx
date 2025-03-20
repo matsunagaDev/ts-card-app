@@ -1,26 +1,19 @@
-import { BrowserRouter, NavLink, Outlet, Route, Routes } from 'react-router';
-import { Home } from './Home';
-import { Hoge } from './Hoge';
-import { Test } from './Test';
-import { UserCard } from './UserCard';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import { UserCard } from './components/UserCard';
+import { Box } from '@chakra-ui/react';
+import { Register } from './components/register';
+import { Home } from './components/Home';
 
 export const App = () => {
   return (
     <BrowserRouter>
-      <h1 data-testid="title">オンライン名刺アプリ</h1>
-      <NavLink to="/card">カード</NavLink>
-      <NavLink to="/card/home">ホーム</NavLink>
-      <NavLink to="/card/hoge">ホゲ</NavLink>
-      <NavLink to="/card/test">テスト</NavLink>
-
-      <Routes>
-        <Route path="card" element={<UserCard />}>
-          <Route path=":id" element={<Outlet />} />
-          <Route path="home" element={<Home />} />
-          <Route path="hoge" element={<Hoge />} />
-          <Route path="test" element={<Test />} />
-        </Route>
-      </Routes>
+      <Box p={4}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/cards/:id" element={<UserCard />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </Box>
     </BrowserRouter>
   );
 };
