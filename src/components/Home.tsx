@@ -16,7 +16,7 @@ export const Home = () => {
       <Flex alignItems={'center'} justifyContent={'center'} h={'100vh'}>
         <Card>
           <CardHeader>
-            <Heading>名刺アプリ</Heading>
+            <Heading data-testid="title">名刺アプリ</Heading>
           </CardHeader>
           <CardBody>
             ID
@@ -27,7 +27,7 @@ export const Home = () => {
               </Button>
             </Box>
             <Box mt={4}>
-              <Link to="/register">新規登録</Link>
+              <Link to="cards/register">新規登録</Link>
             </Box>
           </CardBody>
         </Card>

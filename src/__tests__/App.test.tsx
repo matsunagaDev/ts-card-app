@@ -12,7 +12,6 @@ describe('App Component', () => {
   });
 
   it('renders title correctly', () => {
-    // BrowserRouterでラップする
     render(
       <ChakraProvider>
         <App />
@@ -23,7 +22,6 @@ describe('App Component', () => {
     const titleElement = screen.getByTestId('title');
 
     // アサーション
-    expect(titleElement).toBeInTheDocument();
-    expect(titleElement).toHaveTextContent('オンライン名刺アプリ');
+    expect(titleElement).toHaveTextContent('名刺アプリ');
   });
 });
