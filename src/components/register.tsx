@@ -8,6 +8,7 @@ import {
   CardFooter,
   CardHeader,
   Flex,
+  FormLabel,
   Heading,
   Input,
   Select,
@@ -16,23 +17,23 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { data, useNavigate } from 'react-router';
 import { UserForm } from '../domain/interfaces/userForm';
 import { createUser } from '../lib/user';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { userFormSchema } from '../validations/schemas/userSchema';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { userFormSchema } from '../validations/schemas/userFormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const Register = () => {
-  const [skills, setSkill] = useState<Skill[] | null>([]);
   const navigate = useNavigate();
+  const [skills, setSkill] = useState<Skill[]>([]);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<UserForm>({
     defaultValues: {
-      id: '',
+      user_id: '',
       name: '',
       description: '',
       skillId: '',
@@ -44,14 +45,17 @@ export const Register = () => {
     resolver: zodResolver(userFormSchema),
   });
 
-  // フォーム送信
   const onSubmitUser = async (data: UserForm) => {
     try {
-      console.log(data);
-      await createUser(data);
-      navigate('/');
-    } catch (error) {
-      console.error('Error creating user:', error);
+      console.log('ユーザー登録:', data);
+      // 送信中はローディング状態を維持
+      const newUser = await createUser(data);
+
+      console.log('新規登録したユーザー:', newUser);
+
+      // navigate('/');
+    } catch (err) {
+      console.error('Error creating user:', err);
     }
   };
 
@@ -60,13 +64,10 @@ export const Register = () => {
     const fetchSkills = async () => {
       try {
         const allSkills = await AllSkills();
-        if (!allSkills) {
-          console.log('スキルが取得できませんでした');
-          return;
-        }
-        setSkill(allSkills);
-      } catch (error) {
-        console.error('Error fetching skills:', error);
+        setSkill(allSkills || []);
+      } catch (err) {
+        console.error('Error fetching skills:', err);
+        setSkill([]);
       }
     };
 
@@ -90,62 +91,109 @@ export const Register = () => {
             <CardBody>
               <Stack spacing={4}>
                 <Box>
-                  <Text>好きな英単語</Text>
+                  <FormLabel>好きな英単語</FormLabel>
                   <Input
                     autoFocus
                     placeholder="英単語を入力"
-                    {...(register('id'), { required: true })}
+                    {...register('user_id')}
+                    isInvalid={!!errors.user_id}
                   />
+                  {errors.user_id && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.user_id.message}
+                    </Text>
+                  )}
                 </Box>
                 <Box>
-                  <Text>名前</Text>
+                  <FormLabel>名前</FormLabel>
                   <Input
                     placeholder="名前を入力"
-                    {...(register('name'), { required: true })}
+                    {...register('name')}
+                    isInvalid={!!errors.name}
                   />
+                  {errors.name && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.name.message}
+                    </Text>
+                  )}
                 </Box>
                 <Box>
-                  <Text>自己紹介</Text>
+                  <FormLabel>自己紹介</FormLabel>
                   <Textarea
                     placeholder="<h1>タグも使用可能です</h1>"
-                    {...(register('description'), { required: true })}
+                    {...register('description')}
+                    isInvalid={!!errors.description}
                   />
+                  {errors.description && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.description.message}
+                    </Text>
+                  )}
                 </Box>
                 <Box>
-                  <Text>スキル</Text>
+                  <FormLabel>スキル</FormLabel>
                   <Select
                     variant="outline"
                     placeholder="選択してください"
-                    name="skillId"
+                    {...register('skillId')}
+                    isInvalid={!!errors.skillId}
                   >
-                    {skills?.map((skill) => (
-                      <option key={skill.id} value={skill.id}>
-                        {skill.name}
-                      </option>
-                    ))}
+                    {Array.isArray(skills) &&
+                      skills.map((skill) => (
+                        <option key={skill.id} value={skill.id}>
+                          {skill.name}
+                        </option>
+                      ))}
                   </Select>
+                  {errors.skillId && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.skillId.message}
+                    </Text>
+                  )}
                 </Box>
                 <Box>
-                  <Text>GitHub ID</Text>
-                  <Input {...register('githubId')} />
+                  <FormLabel>GitHub ID</FormLabel>
+                  <Input
+                    {...register('githubId')}
+                    isInvalid={!!errors.githubId}
+                  />
+                  {errors.githubId && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.githubId.message}
+                    </Text>
+                  )}
                 </Box>
                 <Box>
-                  <Text>Qiita ID</Text>
-                  <Input {...register('qiitaId')} />
+                  <FormLabel>Qiita ID</FormLabel>
+                  <Input
+                    {...register('qiitaId')}
+                    isInvalid={!!errors.qiitaId}
+                  />
+                  {errors.qiitaId && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.qiitaId.message}
+                    </Text>
+                  )}
                 </Box>
                 <Box>
-                  <Text>X ID</Text>
-                  <Input {...register('xId')} />
+                  <FormLabel>X ID</FormLabel>
+                  <Input {...register('xId')} isInvalid={!!errors.xId} />
+                  {errors.xId && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.xId.message}
+                    </Text>
+                  )}
                 </Box>
               </Stack>
             </CardBody>
+            {/* フォームの送信ボタン */}
             <CardFooter>
               <Box mt={4}>
                 <Button
                   type="submit"
                   colorScheme="blue"
                   w="100%"
-                  onClick={handleSubmit(onSubmitUser)}
+                  isLoading={isSubmitting}
                 >
                   登録
                 </Button>

@@ -1,5 +1,5 @@
 export interface UserForm {
-  id: string;
+  user_id: string;
   name: string;
   description: string;
   skillId: string;

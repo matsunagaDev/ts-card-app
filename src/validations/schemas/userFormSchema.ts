@@ -1,14 +1,15 @@
 import { z } from 'zod';
 
 export const userFormSchema = z.object({
-  id: z
+  user_id: z
     .string()
     .nonempty('IDは必須です')
-    .min(3, 'IDは3文字以上で入力してください'),
+    .min(3, 'IDは3文字以上で入力してください')
+    .regex(/^[a-zA-Z]+$/, 'IDは英単語のみ使用できます'),
+
   name: z
     .string()
     .nonempty('名前は必須です')
-    .min(5, '名前は5文字以上で入力してください')
     .max(50, '名前は50文字以内で入力してください'),
   description: z
     .string()

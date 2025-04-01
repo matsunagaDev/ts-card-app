@@ -1,4 +1,4 @@
-import { User } from '@/domain/user';
+import { User } from '../domain/user';
 import 'dotenv/config';
 import { supabase } from '../utils/supabase.ts';
 import { UserForm } from '../domain/interfaces/userForm';
@@ -27,76 +27,49 @@ export async function getUserById(userId: string): Promise<User | null> {
 
 // ユーザーを作成する
 export const createUser = async (formData: UserForm): Promise<User> => {
+  if (!formData) {
+    throw new Error('フォームデータが不正です');
+  }
+
+  // トランザクション開始
   const { data: userData, error: userError } = await supabase
     .from('users')
     .insert([
       {
+        user_id: formData.user_id,
         name: formData.name,
         description: formData.description,
-        github_id: formData.githubId,
-        qiita_id: formData.qiitaId,
-        x_id: formData.xId,
+        github_id: formData.githubId || null,
+        qiita_id: formData.qiitaId || null,
+        x_id: formData.xId || null,
       },
     ])
     .select()
     .single();
 
-  if (userError) throw userError;
+  if (userError || !userData) {
+    console.error('Error creating user:', userError);
+    throw new Error('ユーザーの作成に失敗しました');
+  }
 
-  // UserSkillの登録
-  const { error: skillError } = await supabase.from('user_skills').insert([
-    {
-      user_id: userData.id,
-      skill_id: formData.skillId,
-    },
-  ]);
+  // スキルの登録
+  const { error: skillError } = await supabase.from('user_skill').insert({
+    user_id: formData.user_id,
+    skill_id: formData.skillId,
+  });
 
-  if (skillError) throw skillError;
-
-  return User.newUser(
-    userData.id,
-    userData.name,
-    userData.description,
-    [], // skills は後で取得
-    userData.github_id,
-    userData.qiita_id,
-    userData.x_id,
-    userData.created_at
-  );
-};
-
-export const updateUser = async (formData: UserForm): Promise<User> => {
-  // 既存のユーザーを更新
-  const { data: userData, error: userError } = await supabase
-    .from('users')
-    .update({
-      name: formData.name,
-      description: formData.description,
-      github_id: formData.githubId,
-      qiita_id: formData.qiitaId,
-      x_id: formData.xId,
-    })
-    .eq('id', formData.id)
-    .select()
-    .single();
-
-  if (userError) throw userError;
-
-  // スキルの更新が必要な場合
-  if (formData.skillId) {
-    const { error: skillError } = await supabase
-      .from('user_skills')
-      .update({ skill_id: formData.skillId })
-      .eq('user_id', formData.id);
-
-    if (skillError) throw skillError;
+  if (skillError) {
+    console.error('Error creating user skill:', skillError);
+    // ユーザーの削除を試みる（ロールバック）
+    await supabase.from('users').delete().eq('user_id', formData.user_id);
+    throw new Error('スキルの登録に失敗しました');
   }
 
   return User.newUser(
-    userData.id,
+    userData.user_id,
     userData.name,
     userData.description,
-    [], // スキルは別途取得
+    [{ id: formData.skillId, name: '', created_at: '' }], // スキル情報は最小限
     userData.github_id,
     userData.qiita_id,
     userData.x_id,
