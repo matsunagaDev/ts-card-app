@@ -7,59 +7,76 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Checkbox,
+  CheckboxGroup,
   Flex,
   FormLabel,
   Heading,
   Input,
-  Select,
   Stack,
   Text,
   Textarea,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { data, useNavigate } from 'react-router';
-import { UserForm } from '../domain/interfaces/userForm';
-import { createUser } from '../lib/user';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { userFormSchema } from '../validations/schemas/userFormSchema';
+import { useNavigate } from 'react-router';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  userFormSchema,
+  UserFormSchemaType,
+} from '../validations/schemas/userFormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const Register = () => {
   const navigate = useNavigate();
-  const [skills, setSkill] = useState<Skill[]>([]);
+  const [skills, setSkill] = useState<Skill[]>([]); // フォームのチェックボックス
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<UserForm>({
+    control,
+    formState: { errors },
+  } = useForm<UserFormSchemaType>({
+    resolver: zodResolver(userFormSchema),
     defaultValues: {
       user_id: '',
       name: '',
       description: '',
-      skillId: '',
+      skillIds: [], // 配列として初期化
       githubId: '',
       qiitaId: '',
       xId: '',
     },
     mode: 'onChange',
-    resolver: zodResolver(userFormSchema),
   });
 
-  const onSubmitUser = async (data: UserForm) => {
+  const onSubmitUser: SubmitHandler<UserFormSchemaType> = async (data) => {
     try {
-      console.log('ユーザー登録:', data);
-      // 送信中はローディング状態を維持
-      const newUser = await createUser(data);
+      // チェックボックスの値を文字列配列に変換
+      const skillIds = data.skillIds.map(String);
 
-      console.log('新規登録したユーザー:', newUser);
+      const formData = {
+        ...data,
+        skillIds: skillIds,
+      };
 
+      console.log('送信データ:', formData);
+
+      // const response = await createUser(formData);
+      // console.log('登録成功:', response);
       // navigate('/');
-    } catch (err) {
-      console.error('Error creating user:', err);
+    } catch (error) {
+      console.error('登録エラー:', error);
     }
   };
 
-  // useEffectでコンポーネントマウント時にスキルを取得
+  // バリデーションエラーの監視
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.log('バリデーションエラー:', errors);
+    }
+  }, [errors]);
+
+  // スキルの初期表示
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -132,22 +149,33 @@ export const Register = () => {
                 </Box>
                 <Box>
                   <FormLabel>スキル</FormLabel>
-                  <Select
-                    variant="outline"
-                    placeholder="選択してください"
-                    {...register('skillId')}
-                    isInvalid={!!errors.skillId}
-                  >
-                    {Array.isArray(skills) &&
-                      skills.map((skill) => (
-                        <option key={skill.id} value={skill.id}>
-                          {skill.name}
-                        </option>
-                      ))}
-                  </Select>
-                  {errors.skillId && (
+                  <Controller
+                    name="skillIds"
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field: { onChange, value } }) => (
+                      <CheckboxGroup
+                        colorScheme="blue"
+                        value={value || []}
+                        onChange={(vals) =>
+                          // チェックボックスの値を配列として取得
+                          onChange(vals.map(Number))
+                        }
+                      >
+                        <Stack spacing={[1, 2]} direction={['column']}>
+                          {Array.isArray(skills) &&
+                            skills.map((skill) => (
+                              <Checkbox key={skill.id} value={skill.id}>
+                                {skill.name}
+                              </Checkbox>
+                            ))}
+                        </Stack>
+                      </CheckboxGroup>
+                    )}
+                  />
+                  {errors.skillIds && (
                     <Text color="red.500" fontSize="sm">
-                      {errors.skillId.message}
+                      {errors.skillIds.message}
                     </Text>
                   )}
                 </Box>
@@ -193,7 +221,10 @@ export const Register = () => {
                   type="submit"
                   colorScheme="blue"
                   w="100%"
-                  isLoading={isSubmitting}
+                  onClick={(e) => {
+                    // preventDefault()は不要なので削除
+                    console.log('送信ボタンクリック');
+                  }}
                 >
                   登録
                 </Button>

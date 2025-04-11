@@ -2,8 +2,8 @@ export interface UserForm {
   user_id: string;
   name: string;
   description: string;
-  skillId: string;
-  githubId: string | null;
-  qiitaId: string | null;
-  xId: string | null;
+  skillIds: string[]; // 配列型に変更して複数のスキルIDを受け取れるように
+  githubId?: string | null;
+  qiitaId?: string | null;
+  xId?: string | null;
 }
