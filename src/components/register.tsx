@@ -24,8 +24,9 @@ import {
   userFormSchema,
   UserFormSchemaType,
 } from '../validations/schemas/userFormSchema';
-import { insertUser } from '../lib/user';
+import { getUserResponse, insertUser } from '../lib/user';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { UserForm } from '@/domain/interfaces/userForm';
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -51,34 +52,6 @@ export const Register = () => {
     mode: 'onChange',
   });
 
-  const onSubmitUser: SubmitHandler<UserFormSchemaType> = async (data) => {
-    try {
-      console.log('Submitted data:', data);
-
-      // SNSアカウントIDの空白チェックと変換処理
-      const formData = {
-        ...data,
-        skillIds: Array.isArray(data.skillIds) ? data.skillIds : [], // 配列であることを保証
-        githubId: data.githubId || null,
-        qiitaId: data.qiitaId || null,
-        xId: data.xId || null,
-      };
-
-      console.log('送信データ:', formData); // デバッグ用ログ
-      console.log('githubId:', formData.githubId);
-      console.log('qiitaId:', formData.qiitaId);
-      console.log('xId:', formData.xId);
-
-      // 登録処理;
-      const result = await insertUser(formData);
-      if (!result) {
-        console.error('ユーザー登録に失敗しました');
-      }
-    } catch (error) {
-      console.error('Submit error:', error);
-    }
-  };
-
   // スキルの初期表示
   useEffect(() => {
     const fetchSkills = async () => {
@@ -96,6 +69,35 @@ export const Register = () => {
 
     fetchSkills();
   }, []);
+
+  // const onSubmitUser: SubmitHandler<UserFormSchemaType> = async (
+  const onSubmitUser = async (data: UserForm) => {
+    try {
+      console.log('Submitted data:', data);
+
+      // SNSアカウントIDの空白チェックと変換処理
+      const formData = {
+        ...data,
+        skillIds: Array.isArray(data.skillIds) ? data.skillIds : [], // 配列であることを保証
+        githubId: data.githubId || null,
+        qiitaId: data.qiitaId || null,
+        xId: data.xId || null,
+      };
+
+      console.log('送信データ:', formData); // デバッグ用ログ
+      console.log('githubId:', formData.githubId);
+      console.log('qiitaId:', formData.qiitaId);
+      console.log('xId:', formData.xId);
+
+      const result = await insertUser(formData);
+      if (!result) {
+        console.error('ユーザー登録に失敗しました');
+      }
+      navigate('/'); // 登録成功後にトップページへ遷移
+    } catch (error) {
+      console.error('Submit error:', error);
+    }
+  };
 
   /**
    * 画面表示

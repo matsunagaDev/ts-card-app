@@ -1,8 +1,7 @@
 import { User } from '../domain/user';
-import 'dotenv/config';
-import { supabase } from '../utils/supabase.ts';
+// 'dotenv/config'のインポートを削除 - これはNode.js環境用であり、ブラウザでは動作しません
+import { supabase } from '../utils/supabase';
 import { UserForm } from '../domain/interfaces/userForm';
-import { UserFormSchemaType } from '../validations/schemas/userFormSchema.ts';
 
 // 全てのユーザーを取得する
 export async function getAllUsers(): Promise<User[]> {
@@ -26,9 +25,18 @@ export async function getUserById(userId: string): Promise<User | null> {
   return data;
 }
 
+// 単純にブール値を返す関数でさえエラーが発生していることから
+// 関数呼び出し時に何らかの問題が起きている可能性があります
+export async function getUserResponse(): Promise<void> {
+  console.log('getUserResponse関数が実行されました');
+  // 何も処理せず単にtrueを返す
+}
+
 // ユーザーを作成する
-export async function insertUser(formData: UserForm): Promise<boolean | null> {
-  console.log('createUser received formData:', formData); // デバッグ用ログ
+export async function insertUser(formData: UserForm): Promise<boolean> {
+  console.log('insertUser関数に渡されたデータ:', formData); // デバッグ用ログ
+
+  // const { user_id, name, description, skillIds } = formData;
 
   // ユーザーの作成
   const { error: userError } = await supabase.from('users').insert([
@@ -58,7 +66,7 @@ export async function insertUser(formData: UserForm): Promise<boolean | null> {
     skill_id: skillId,
   }));
 
-  console.log('userSkillData:', userSkillData); // デバッグ用ログ
+  console.log('スキル登録データ:', userSkillData); // デバッグ用ログ
 
   // スキルの登録
   const { error: skillError } = await supabase
