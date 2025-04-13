@@ -14,7 +14,7 @@ export const userFormSchema = z.object({
     .string()
     .min(1, '自己紹介は必須です')
     .max(1000, '自己紹介は1000文字以内で入力してください'),
-  skillIds: z.array(z.string()).min(1, 'スキルは1つ以上選択してください'),
+  skillIds: z.array(z.number()).min(1, 'スキルは1つ以上選択してください'), // stringからnumberに変更
   githubId: z.string().nullable().optional(),
   qiitaId: z.string().nullable().optional(),
   xId: z.string().nullable().optional(),
