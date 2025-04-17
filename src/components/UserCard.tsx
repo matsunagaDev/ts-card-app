@@ -1,4 +1,4 @@
-import { Outlet, useParams } from 'react-router';
+import { Outlet, useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import type { User } from '../domain/user';
 import {
@@ -20,6 +20,7 @@ import {
   Wrap,
   WrapItem,
   Stack,
+  CardFooter,
 } from '@chakra-ui/react';
 import * as DOMPurify from 'dompurify';
 import { getUserSkillById } from '../lib/userSkill';
@@ -30,6 +31,7 @@ export const UserCard = () => {
   const { id } = useParams();
   const [user, setUser] = useState<User | null>(null);
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -195,6 +197,28 @@ export const UserCard = () => {
                 </Box>
               </Stack>
             </CardBody>
+            <CardFooter>
+              <Flex justify="space-between" w="100%">
+                <Link
+                  color="blue.500"
+                  fontWeight="bold"
+                  onClick={() => {
+                    navigate(-1);
+                  }}
+                >
+                  戻る
+                </Link>
+                <Link
+                  color="blue.500"
+                  fontWeight="bold"
+                  onClick={() => {
+                    navigate(`/user/${id}/edit`);
+                  }}
+                >
+                  編集
+                </Link>
+              </Flex>
+            </CardFooter>
           </Card>
         </VStack>
         <Outlet />
