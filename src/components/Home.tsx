@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   Flex,
   FormControl,
@@ -10,11 +11,16 @@ import {
   Heading,
   Input,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { getUserById } from '../lib/user';
 
 export const Home = () => {
+  const toast = useToast();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -25,13 +31,39 @@ export const Home = () => {
     },
   });
 
-  const navigate = useNavigate();
-
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     console.log('ID:', data);
-    // IDがDBに存在するか確認する処理を追加⭐️
 
-    navigate(`/cards/${data.id}`);
+    try {
+      const user = await getUserById(data.id);
+      console.log('ユーザー情報:', user);
+
+      // ユーザーが存在しない場合
+      if (user === null) {
+        toast({
+          title: 'エラー',
+          description: '入力されたIDのユーザーは存在しません',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        // 遷移せずここで処理を終了
+        return;
+      }
+
+      // ユーザーが存在する場合は対象のユーザーページへ遷移
+      navigate(`/cards/${data.id}`);
+    } catch (error) {
+      console.error('ユーザー取得エラー:', error);
+
+      toast({
+        title: 'エラー',
+        description: 'ユーザー情報の取得に失敗しました',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   });
 
   return (
@@ -53,7 +85,6 @@ export const Home = () => {
                   {...register('id')}
                   autoFocus
                   placeholder="IDを入力"
-                  isInvalid={!!errors.id}
                 />
                 {errors.id && (
                   <Text color="red.500" fontSize="sm">
@@ -67,10 +98,12 @@ export const Home = () => {
                 </Box>
               </FormControl>
             </form>
-            <Box mt={4}>
-              <Link to="cards/register">新規登録</Link>
-            </Box>
           </CardBody>
+          <CardFooter justifyContent="center" width="100%">
+            <Link color="teal.500" to="cards/register">
+              新規登録
+            </Link>
+          </CardFooter>
         </Card>
       </Flex>
     </>

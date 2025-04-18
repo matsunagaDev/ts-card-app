@@ -19,8 +19,9 @@ export async function getUserById(userId: string): Promise<User | null> {
     .select('*')
     .eq('user_id', userId)
     .single();
+
   if (error) {
-    throw new Error(error.message);
+    return null;
   }
   return data;
 }
