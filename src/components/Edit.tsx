@@ -1,3 +1,7 @@
+import {
+  userEditFormSchema,
+  UserEditFormSchemaType,
+} from '../validations/schemas/userFormSchema';
 import { Skill } from '../domain/skill';
 import { AllSkills } from '../lib/skill';
 import {
@@ -19,17 +23,16 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import {
-  userFormSchema,
-  UserFormSchemaType,
-} from '../validations/schemas/userFormSchema';
-import { checkUserExists, insertUser } from '../lib/user';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserForm } from '@/domain/interfaces/userForm';
+import { User } from '../domain/user';
+import { getUserSkillForEdit } from '../lib/userSkill';
+import { updateUser } from '../lib/user';
 
-export const Register = () => {
+export const Edit = () => {
+  const { id } = useParams();
+  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
   const toast = useToast();
   const [skills, setSkill] = useState<Skill[]>([]);
@@ -38,14 +41,14 @@ export const Register = () => {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
-  } = useForm<UserFormSchemaType>({
-    resolver: zodResolver(userFormSchema),
+  } = useForm<UserEditFormSchemaType>({
+    resolver: zodResolver(userEditFormSchema),
     defaultValues: {
-      user_id: '',
       name: '',
       description: '',
-      skillIds: [], // 配列として初期化
+      skillIds: [],
       githubId: '',
       qiitaId: '',
       xId: '',
@@ -54,14 +57,35 @@ export const Register = () => {
   });
 
   /**
-   * スキル一覧を取得
+   * ユーザー情報を取得
    * @returns
    */
   useEffect(() => {
-    const fetchSkills = async () => {
+    const UserData = async () => {
       try {
+        if (!id) {
+          console.log('URLパラメータのIDが見つかりません');
+          return;
+        }
         const allSkills = await AllSkills();
-        setSkill(allSkills || []);
+        setSkill(allSkills || []); // スキル一覧をセット
+
+        const User = await getUserSkillForEdit(id);
+
+        setUser(User); // ユーザー情報をセット
+
+        // 非同期で取得したデータをフォームにセット
+        setValue('name', User.name);
+        setValue('description', User.description);
+        setValue(
+          'skillIds',
+          User.skills.map((skill) => Number(skill.id))
+        );
+        setValue('githubId', User.github_id);
+        setValue('qiitaId', User.qiita_id);
+        setValue('xId', User.x_id);
+
+        console.log(`ユーザー情報をセット: ${User.name}`);
       } catch (err) {
         console.error('Error fetching skills:', err);
         setSkill([]);
@@ -76,23 +100,22 @@ export const Register = () => {
         });
       }
     };
-
-    fetchSkills();
-  }, [toast]);
+    UserData();
+  }, [toast, id, setValue]); // setValueを依存配列に追加
 
   /**
-   * ユーザー登録処理
+   * 更新処理
    * @param data
    */
-  const onSubmitUser = async (data: UserFormSchemaType) => {
+  const onUpdateUser = async (data: UserEditFormSchemaType) => {
     try {
       console.log('Submitted data:', data);
 
-      // SNSアカウントIDの空白チェックと変換処理
-      const formData: UserForm = {
-        user_id: data.user_id,
-        name: data.name,
-        description: data.description,
+      // UserFormインターフェースに合わせて必須フィールドを確実に含める
+      const formData = {
+        user_id: user?.user_id || '', // ユーザーIDを確実に含める
+        name: data.name || '', // nameを必須として扱う
+        description: data.description || '', // descriptionを必須として扱う
         skillIds: Array.isArray(data.skillIds) ? data.skillIds : [], // 配列であることを保証
         githubId: data.githubId || null,
         qiitaId: data.qiitaId || null,
@@ -101,66 +124,61 @@ export const Register = () => {
 
       console.log('送信データ:', formData); // デバッグ用ログ
 
-      // ユーザーの重複チェック
-      const exists = await checkUserExists(formData.user_id);
+      try {
+        // updateUserの結果を直接取得
+        const result = await updateUser(formData);
 
-      if (exists) {
-        // ユーザーが存在する場合はエラーtoastを表示
+        // 結果に基づいてトースト表示
+        if (result) {
+          toast({
+            title: '更新完了',
+            description: 'ユーザー情報の更新に成功しました',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+
+          // 更新成功時はユーザー詳細画面に遷移
+          navigate(`/cards/${formData.user_id}`);
+        } else {
+          toast({
+            title: '更新失敗',
+            description: 'ユーザー情報の更新に失敗しました',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
         toast({
-          title: 'ユーザー登録エラー',
-          description: 'このユーザーIDは既に使用されています',
+          title: '更新失敗',
+          description: 'ユーザー情報の更新処理中にエラーが発生しました',
           status: 'error',
-          duration: 5000,
+          duration: 3000,
           isClosable: true,
         });
-        return; // ユーザーが存在する場合は処理を中断
+        console.error('更新処理エラー:', error);
       }
-
-      // ユーザー登録処理
-      await toast.promise(insertUser(formData), {
-        loading: {
-          title: '登録中',
-          description: 'ユーザー情報を登録しています',
-        },
-        success: {
-          title: '登録完了',
-          description: 'ユーザー情報の登録に成功しました',
-        },
-        error: {
-          title: '登録失敗',
-          description: 'ユーザー情報の登録に失敗しました',
-        },
-      });
-
-      // 登録成功後にトップページへ遷移
-      navigate('/');
     } catch (error) {
-      console.error('Submit error:', error);
-      toast({
-        title: '予期せぬエラー',
-        description: '登録処理中にエラーが発生しました',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      console.error('ユーザー更新エラー:', error);
     }
   };
 
   /**
-   * 画面表示
+   * 画面レイアウト
    */
   return (
     <>
       <Flex alignItems={'center'} justifyContent={'center'} h={'100vh'}>
         <Card maxW="400px">
           <form
-            onSubmit={handleSubmit((data) => {
-              onSubmitUser(data);
+            onSubmit={handleSubmit(onUpdateUser, (formErrors) => {
+              console.log('バリデーションエラー:', formErrors);
             })}
           >
             <CardHeader>
               <Heading size="md" textAlign="center">
-                新規登録
+                編集
               </Heading>
             </CardHeader>
 
@@ -168,17 +186,9 @@ export const Register = () => {
               <Stack spacing={4}>
                 <Box>
                   <FormLabel>好きな英単語</FormLabel>
-                  <Input
-                    autoFocus
-                    placeholder="英単語を入力"
-                    {...register('user_id')}
-                    isInvalid={!!errors.user_id}
-                  />
-                  {errors.user_id && (
-                    <Text color="red.500" fontSize="sm">
-                      {errors.user_id.message}
-                    </Text>
-                  )}
+                  <Box>
+                    <Heading size="lg">{user?.user_id}</Heading>
+                  </Box>
                 </Box>
                 <Box>
                   <FormLabel>名前</FormLabel>
@@ -211,11 +221,10 @@ export const Register = () => {
                   <Controller
                     name="skillIds"
                     control={control}
-                    defaultValue={[]}
                     render={({ field: { onChange, value } }) => (
                       <CheckboxGroup
                         colorScheme="blue"
-                        value={value || []}
+                        value={value || []} // valueはsetValueによって更新される
                         onChange={(vals) =>
                           // チェックボックスの値を配列として取得
                           onChange(vals.map(Number))
@@ -224,7 +233,10 @@ export const Register = () => {
                         <Stack spacing={[1, 2]} direction={['column']}>
                           {Array.isArray(skills) &&
                             skills.map((skill) => (
-                              <Checkbox key={skill.id} value={skill.id}>
+                              <Checkbox
+                                key={skill.id}
+                                value={Number(skill.id)} // 明示的に数値に変換
+                              >
                                 {skill.name}
                               </Checkbox>
                             ))}
@@ -274,19 +286,7 @@ export const Register = () => {
               </Stack>
             </CardBody>
             {/* フォームの送信ボタン */}
-            <CardFooter>
-              <Box mt={4}>
-                <Button
-                  type="submit"
-                  colorScheme="blue"
-                  w="100%"
-                  onClick={(e) => {
-                    console.log('送信ボタンクリック');
-                  }}
-                >
-                  登録
-                </Button>
-              </Box>
+            <CardFooter justifyContent={'space-between'}>
               <Box mt={4}>
                 <Button
                   colorScheme="orange"
@@ -295,6 +295,11 @@ export const Register = () => {
                   onClick={() => navigate(-1)}
                 >
                   戻る
+                </Button>
+              </Box>
+              <Box mt={4}>
+                <Button type="submit" colorScheme="blue" w="100%">
+                  更新
                 </Button>
               </Box>
             </CardFooter>

@@ -77,7 +77,7 @@ export const Home = () => {
           </CardHeader>
           <CardBody>
             {/* react-hook-formのuseFormを使用して、フォームの状態を管理 */}
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} data-testid="search-form">
               <FormControl>
                 <FormLabel>ID</FormLabel>
                 <Input
@@ -85,6 +85,7 @@ export const Home = () => {
                   {...register('id')}
                   autoFocus
                   placeholder="IDを入力"
+                  data-testid="id-input"
                 />
                 {errors.id && (
                   <Text color="red.500" fontSize="sm">
@@ -92,7 +93,12 @@ export const Home = () => {
                   </Text>
                 )}
                 <Box mt={4}>
-                  <Button type="submit" colorScheme="blue" w="100%">
+                  <Button
+                    type="submit"
+                    colorScheme="blue"
+                    w="100%"
+                    data-testid="view-button"
+                  >
                     名刺を見る
                   </Button>
                 </Box>

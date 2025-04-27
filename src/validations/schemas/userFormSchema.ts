@@ -20,4 +20,8 @@ export const userFormSchema = z.object({
   xId: z.string().nullable().optional(),
 });
 
+// 編集用のユーザーフォームスキーマ
+export const userEditFormSchema = userFormSchema.omit({ user_id: true });
+
 export type UserFormSchemaType = z.infer<typeof userFormSchema>;
+export type UserEditFormSchemaType = z.infer<typeof userEditFormSchema>;

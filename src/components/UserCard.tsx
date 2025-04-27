@@ -21,6 +21,7 @@ import {
   WrapItem,
   Stack,
   CardFooter,
+  Button,
 } from '@chakra-ui/react';
 import * as DOMPurify from 'dompurify';
 import { getUserSkillById } from '../lib/userSkill';
@@ -85,7 +86,9 @@ export const UserCard = () => {
                 <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
                   <Avatar name={user?.name} src="" />
                   <Box>
-                    <Heading size="lg">{user?.name}</Heading>
+                    <Heading size="lg" data-testid="user-name">
+                      {user?.name}
+                    </Heading>
                   </Box>
                 </Flex>
               </Flex>
@@ -100,6 +103,7 @@ export const UserCard = () => {
 
                   {/* 方法1: Chakra UIのdangerouslySetInnerHTML代替手段を使用 */}
                   <Text
+                    data-testid="user-description"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.default.sanitize(
                         user?.description || ''
@@ -112,13 +116,19 @@ export const UserCard = () => {
                   <Heading size="md" textTransform="uppercase" mb={4}>
                     スキル
                   </Heading>
-                  <List spacing={3} styleType="none" pl={4}>
+                  <List
+                    spacing={3}
+                    styleType="none"
+                    pl={4}
+                    data-testid="skill-list"
+                  >
                     {user?.skills?.map((skill) => (
                       <ListItem
                         key={skill.id}
                         display="flex"
                         alignItems="center"
                         gap={2}
+                        data-testid={`skill-item-${skill.id}`}
                       >
                         <Box
                           as="span"
@@ -138,13 +148,14 @@ export const UserCard = () => {
                     SNS
                   </Heading>
                   <Flex justify="center" align="center">
-                    <Wrap spacing={8} justify="center">
+                    <Wrap spacing={8} justify="center" data-testid="sns-links">
                       {user?.github_id && (
                         <WrapItem>
                           <Link
                             href={user.github_id}
                             isExternal
                             _hover={{ textDecoration: 'none' }}
+                            data-testid="github-link"
                           >
                             <IconButton
                               aria-label="GitHub"
@@ -163,6 +174,7 @@ export const UserCard = () => {
                             href={user.qiita_id}
                             isExternal
                             _hover={{ textDecoration: 'none' }}
+                            data-testid="qiita-link"
                           >
                             <IconButton
                               aria-label="Qiita"
@@ -181,6 +193,7 @@ export const UserCard = () => {
                             href={user.x_id}
                             isExternal
                             _hover={{ textDecoration: 'none' }}
+                            data-testid="x-link"
                           >
                             <IconButton
                               aria-label="X (Twitter)"
@@ -199,24 +212,17 @@ export const UserCard = () => {
             </CardBody>
             <CardFooter>
               <Flex justify="space-between" w="100%">
-                <Link
-                  color="blue.500"
-                  fontWeight="bold"
-                  onClick={() => {
-                    navigate(-1);
-                  }}
-                >
+                <Button onClick={() => navigate('/')} colorScheme="blue">
                   戻る
-                </Link>
-                <Link
-                  color="blue.500"
-                  fontWeight="bold"
+                </Button>
+                <Button
+                  colorScheme="blue"
                   onClick={() => {
-                    navigate(`/user/${id}/edit`);
+                    navigate(`/cards/${id}/edit`);
                   }}
                 >
                   編集
-                </Link>
+                </Button>
               </Flex>
             </CardFooter>
           </Card>

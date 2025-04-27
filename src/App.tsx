@@ -3,6 +3,7 @@ import { UserCard } from './components/UserCard';
 import { Box } from '@chakra-ui/react';
 import { Register } from './components/register';
 import { Home } from './components/Home';
+import { Edit } from './components/Edit';
 
 export const App = () => {
   return (
@@ -11,6 +12,7 @@ export const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cards/:id" element={<UserCard />} />
+          <Route path="/cards/:id/edit" element={<Edit />} />
           <Route path="/cards/register" element={<Register />} />
         </Routes>
       </Box>

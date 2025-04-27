@@ -1,5 +1,4 @@
 import { User } from '../domain/user';
-// 'dotenv/config'のインポートを削除 - これはNode.js環境用であり、ブラウザでは動作しません
 import { supabase } from '../utils/supabase';
 import { UserForm } from '../domain/interfaces/userForm';
 
@@ -99,6 +98,94 @@ export async function insertUser(formData: UserForm): Promise<boolean> {
     } catch (rollbackError) {
       console.error('ロールバック処理に失敗しました:', rollbackError);
     }
+    return false; // 例外発生時もfalseを返す
+  }
+}
+
+// ユーザーを更新する
+export async function updateUser(formData: UserForm): Promise<boolean> {
+  try {
+    // ユーザーの更新
+    const { error: userError } = await supabase
+      .from('users')
+      .update({
+        name: formData.name,
+        description: formData.description,
+        github_id: formData.githubId,
+        qiita_id: formData.qiitaId,
+        x_id: formData.xId,
+      })
+      .eq('user_id', formData.user_id);
+
+    if (userError) {
+      console.error('ユーザー更新エラー:', userError);
+      return false; // エラー時はfalseを返す
+    }
+
+    // 既存のスキルを削除
+    const { error: deleteSkillError } = await supabase
+      .from('user_skill')
+      .delete()
+      .eq('user_id', formData.user_id);
+
+    if (deleteSkillError) {
+      console.error('既存スキル削除エラー:', deleteSkillError);
+      return false; // エラー時はfalseを返す
+    }
+
+    // スキルの情報が存在する場合のみ新たに登録する
+    if (formData.skillIds && formData.skillIds.length > 0) {
+      const userSkillData = formData.skillIds.map((skillId) => ({
+        user_id: formData.user_id,
+        skill_id: skillId,
+      }));
+
+      // 新しいスキルを登録
+      const { error: skillError } = await supabase
+        .from('user_skill')
+        .insert(userSkillData);
+
+      if (skillError) {
+        console.error('スキル登録エラー:', skillError);
+        return false; // エラー時はfalseを返す
+      }
+    }
+
+    return true; // 成功時はtrueを返す
+  } catch (error) {
+    console.error('予期しないエラーが発生しました:', error);
+    return false; // 例外発生時もfalseを返す
+  }
+}
+
+// ユーザーを削除する
+export async function deleteUser(userId: string): Promise<boolean> {
+  try {
+    // ユーザーの削除
+    const { error: userError } = await supabase
+      .from('users')
+      .delete()
+      .eq('user_id', userId);
+
+    if (userError) {
+      console.error('ユーザー削除エラー:', userError);
+      return false; // エラー時はfalseを返す
+    }
+
+    // スキルの削除
+    const { error: skillError } = await supabase
+      .from('user_skill')
+      .delete()
+      .eq('user_id', userId);
+
+    if (skillError) {
+      console.error('スキル削除エラー:', skillError);
+      return false; // エラー時はfalseを返す
+    }
+
+    return true; // 成功時はtrueを返す
+  } catch (error) {
+    console.error('予期しないエラーが発生しました:', error);
     return false; // 例外発生時もfalseを返す
   }
 }
