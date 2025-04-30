@@ -155,7 +155,6 @@ export const UserCard = () => {
                             href={user.github_id}
                             isExternal
                             _hover={{ textDecoration: 'none' }}
-                            data-testid="github-link"
                           >
                             <IconButton
                               aria-label="GitHub"
@@ -163,6 +162,7 @@ export const UserCard = () => {
                               variant="ghost"
                               size="lg"
                               _hover={{ bg: 'gray.100' }}
+                              data-testid="github-icon"
                             />
                           </Link>
                         </WrapItem>
@@ -174,7 +174,6 @@ export const UserCard = () => {
                             href={user.qiita_id}
                             isExternal
                             _hover={{ textDecoration: 'none' }}
-                            data-testid="qiita-link"
                           >
                             <IconButton
                               aria-label="Qiita"
@@ -182,6 +181,7 @@ export const UserCard = () => {
                               variant="ghost"
                               size="lg"
                               _hover={{ bg: 'gray.100' }}
+                              data-testid="qiita-icon"
                             />
                           </Link>
                         </WrapItem>
@@ -193,7 +193,6 @@ export const UserCard = () => {
                             href={user.x_id}
                             isExternal
                             _hover={{ textDecoration: 'none' }}
-                            data-testid="x-link"
                           >
                             <IconButton
                               aria-label="X (Twitter)"
@@ -201,6 +200,7 @@ export const UserCard = () => {
                               variant="ghost"
                               size="lg"
                               _hover={{ bg: 'gray.100' }}
+                              data-testid="x-icon"
                             />
                           </Link>
                         </WrapItem>
@@ -212,7 +212,11 @@ export const UserCard = () => {
             </CardBody>
             <CardFooter>
               <Flex justify="space-between" w="100%">
-                <Button onClick={() => navigate('/')} colorScheme="blue">
+                <Button
+                  onClick={() => navigate('/')}
+                  colorScheme="blue"
+                  data-testid="back-button"
+                >
                   戻る
                 </Button>
                 <Button
