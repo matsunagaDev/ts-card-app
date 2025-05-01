@@ -4,6 +4,9 @@ import { App } from '../App';
 import '@testing-library/jest-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { getUserSkillById } from '../lib/userSkill';
+import { MemoryRouter, Route, Routes } from 'react-router';
+import { Home } from '../components/Home';
+import { Register } from '../components/Register';
 
 /**
  * モックの設定
@@ -41,6 +44,15 @@ jest.mock('../lib/user', () => ({
   }),
 }));
 
+// スキルデータ取得用API
+jest.mock('../lib/skill', () => ({
+  AllSkills: jest.fn().mockResolvedValue([
+    { id: 1, name: 'React' },
+    { id: 2, name: 'TypeScript' },
+    { id: 3, name: 'GitHub' },
+  ]),
+}));
+
 // ナビゲーションのモック
 const mockNavigate = jest.fn();
 jest.mock('react-router', () => ({
@@ -56,9 +68,11 @@ describe('App Component', () => {
 
     // コンポーネントをレンダリング
     render(
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>
+      <MemoryRouter initialEntries={['/']}>
+        <ChakraProvider>
+          <Home />
+        </ChakraProvider>
+      </MemoryRouter>
     );
   });
 
@@ -69,37 +83,6 @@ describe('App Component', () => {
   it('タイトルが正しく表示される', () => {
     const titleElement = screen.getByTestId('title');
     expect(titleElement).toHaveTextContent('名刺アプリ');
-  });
-
-  it('IDを入力して名刺カードが正しく表示される', async () => {
-    // テストユーザー操作の準備
-    const user = userEvent.setup();
-
-    // テスト用のユーザーデータを設定
-    const mockUserData = {
-      user_id: 'testuser',
-      name: 'テストユーザー',
-      description: '<p>これはテスト用の自己紹介です</p>',
-      skills: [
-        { id: '1', name: 'JavaScript' },
-        { id: '2', name: 'React' },
-      ],
-      github_id: 'https://github.com/testuser',
-      qiita_id: 'https://qiita.com/testuser',
-      x_id: 'https://x.com/testuser',
-      created_at: '2025-01-01 12:00:00',
-    };
-
-    // モック関数の戻り値を設定
-    (getUserSkillById as jest.Mock).mockResolvedValue(mockUserData);
-
-    // ホーム画面でIDを入力
-    const idInput = await waitFor(() => screen.getByTestId('id-input'));
-    await user.type(idInput, 'testuser');
-
-    // 「名刺を見る」ボタンをクリック
-    const viewButton = await waitFor(() => screen.getByTestId('view-button'));
-    await user.click(viewButton);
   });
 
   it('IDを入力して名刺を見るボタンを押すと、cards/:idに遷移すること', async () => {
@@ -117,6 +100,33 @@ describe('App Component', () => {
     // 正しい画面遷移が行われたことを確認
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/cards/testuser');
+    });
+  });
+
+  it('IDを入力せずに名刺を見るボタンを押すと、エラーメッセージが表示されること', async () => {
+    // テストユーザー操作の準備
+    const user = userEvent.setup();
+
+    // ホーム画面でIDを入力せずに「名刺を見る」ボタンをクリック
+    const viewButton = await screen.findByTestId('view-button');
+    await user.click(viewButton);
+
+    // エラーメッセージが表示されることを確認
+    const errorMessage = await screen.findByText('IDを入力してください');
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  it('新規登録ボタンを押下すると/cards/registerに遷移すること', async () => {
+    // テストユーザー操作の準備
+    const user = userEvent.setup();
+
+    // ホーム画面で「新規登録」ボタンをクリック
+    const registerLink = await screen.findByTestId('register-link');
+    await user.click(registerLink);
+
+    // 正しい画面遷移が行われたことを確認
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/cards/register');
     });
   });
 });

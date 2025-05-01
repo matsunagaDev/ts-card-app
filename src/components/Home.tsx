@@ -12,8 +12,9 @@ import {
   Input,
   Text,
   useToast,
+  Link,
 } from '@chakra-ui/react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { getUserById } from '../lib/user';
 
@@ -37,6 +38,19 @@ export const Home = () => {
     try {
       const user = await getUserById(data.id);
       console.log('ユーザー情報:', user);
+
+      // 未入力の場合
+      if (data.id === '') {
+        toast({
+          title: 'エラー',
+          description: 'IDを入力してください',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        // 遷移せずここで処理を終了
+        return;
+      }
 
       // ユーザーが存在しない場合
       if (user === null) {
@@ -65,6 +79,10 @@ export const Home = () => {
       });
     }
   });
+
+  const onRegister = () => {
+    navigate('/cards/register');
+  };
 
   return (
     <>
@@ -106,7 +124,11 @@ export const Home = () => {
             </form>
           </CardBody>
           <CardFooter justifyContent="center" width="100%">
-            <Link color="teal.500" to="cards/register">
+            <Link
+              color="teal.500"
+              onClick={onRegister}
+              data-testid="register-link"
+            >
               新規登録
             </Link>
           </CardFooter>
