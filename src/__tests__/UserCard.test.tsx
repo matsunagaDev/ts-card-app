@@ -1,36 +1,39 @@
-import { getUserSkillById } from '../lib/userSkill';
-import { UserCard } from '../components/UserCard';
-import { ChakraProvider } from '@chakra-ui/react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { ChakraProvider } from '@chakra-ui/react';
 import { MemoryRouter } from 'react-router';
+import { UserCard } from '../components/UserCard';
+import userEvent from '@testing-library/user-event';
 
 /**
- * モックの作成
+ * ユーザーカード表示時の操作テスト
+ *
+ * - データ取得: ユーザー情報の取得機能をモック
+ * - 画面遷移: ホーム画面への戻る機能をモック
  */
-// Supabaseクライアントのモック
+// API関連モック
 const mockUser = jest.fn();
 jest.mock('../lib/userSkill', () => ({
   getUserSkillById: () => mockUser,
 }));
-// useNavigateのモックを設定
+
+// 画面遷移モック
 const mockNavigate = jest.fn();
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: () => mockNavigate,
 }));
 
-describe('UserCard back to home', () => {
+describe('UserCard Component', () => {
+  // 各テスト実行前のモッククリア
   beforeEach(() => {
     mockNavigate.mockClear();
     mockUser.mockClear();
   });
 
-  it('ホーム画面に遷移する', async () => {
-    // ユーザーイベントのセットアップ
+  it('戻るボタンをクリックするとホーム画面に遷移する', async () => {
     const user = userEvent.setup();
 
-    // モックユーザーデータ
+    // テスト用データの設定
     const mockUserData = {
       user_id: 'testuser',
       name: 'テストユーザー',
@@ -45,9 +48,10 @@ describe('UserCard back to home', () => {
       created_at: '2025-01-01 12:00:00',
     };
 
-    // モックの設定
+    // モックの戻り値設定
     mockUser.mockResolvedValue(mockUserData);
 
+    // 特定のルートでコンポーネントをレンダリング
     render(
       <MemoryRouter initialEntries={['/cards/testuser']}>
         <ChakraProvider>
@@ -56,14 +60,14 @@ describe('UserCard back to home', () => {
       </MemoryRouter>
     );
 
-    // 戻るボタンが表示されるまで待機
+    // 戻るボタンを探して存在確認
     const backButton = await screen.findByTestId('back-button');
     expect(backButton).toBeInTheDocument();
 
-    // ボタンをクリック（await を追加）
+    // 戻るボタンをクリック
     await user.click(backButton);
 
-    // ナビゲーションが呼ばれるまで待機
+    // ナビゲーション関数が正しく呼ばれたことを確認
     await expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 });

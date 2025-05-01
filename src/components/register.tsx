@@ -151,28 +151,53 @@ export const Register = () => {
    */
   return (
     <>
-      <Flex alignItems={'center'} justifyContent={'center'} h={'100vh'}>
-        <Card maxW="400px">
+      <Flex
+        alignItems={'center'}
+        justifyContent={'center'}
+        minH={'100vh'}
+        py={8}
+        overflow={'auto'}
+        bg="gray.50" // 全体の背景色を淡いグレーに
+      >
+        <Card
+          maxW="400px"
+          my={4}
+          boxShadow="lg" // シャドウを追加して浮き上がり感を出す
+          bg="white" // カードの背景色
+          borderRadius="lg" // 角を丸くする
+        >
           <form
             onSubmit={handleSubmit((data) => {
               onSubmitUser(data);
             })}
           >
-            <CardHeader>
-              <Heading size="md" textAlign="center">
+            <CardHeader bg="blue.50">
+              {' '}
+              {/* ヘッダー部分の背景色 */}
+              <Heading
+                size="md"
+                textAlign="center"
+                color="blue.700"
+                data-testid="title"
+              >
                 新規登録
               </Heading>
             </CardHeader>
 
-            <CardBody>
+            <CardBody maxH={{ base: '60vh', md: 'none' }} overflow="auto">
               <Stack spacing={4}>
                 <Box>
-                  <FormLabel>好きな英単語</FormLabel>
+                  <FormLabel htmlFor="user-id-input">好きな英単語</FormLabel>
                   <Input
+                    id="user-id-input"
                     autoFocus
                     placeholder="英単語を入力"
                     {...register('user_id')}
                     isInvalid={!!errors.user_id}
+                    bg="white" // 入力フィールドの背景色
+                    borderColor="gray.300" // 枠線の色
+                    _hover={{ borderColor: 'blue.300' }} // ホバー時の枠線色
+                    data-testid="user-id-input"
                   />
                   {errors.user_id && (
                     <Text color="red.500" fontSize="sm">
@@ -181,11 +206,16 @@ export const Register = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>名前</FormLabel>
+                  <FormLabel htmlFor="name-input">名前</FormLabel>
                   <Input
+                    id="name-input"
                     placeholder="名前を入力"
                     {...register('name')}
                     isInvalid={!!errors.name}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
+                    data-testid="name-input"
                   />
                   {errors.name && (
                     <Text color="red.500" fontSize="sm">
@@ -194,11 +224,16 @@ export const Register = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>自己紹介</FormLabel>
+                  <FormLabel htmlFor="description-input">自己紹介</FormLabel>
                   <Textarea
+                    id="description-input"
                     placeholder="<h1>タグも使用可能です</h1>"
                     {...register('description')}
                     isInvalid={!!errors.description}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
+                    data-testid="description-input"
                   />
                   {errors.description && (
                     <Text color="red.500" fontSize="sm">
@@ -239,10 +274,15 @@ export const Register = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>GitHub ID</FormLabel>
+                  <FormLabel htmlFor="github-input">GitHub ID</FormLabel>
                   <Input
+                    id="github-input"
                     {...register('githubId')}
                     isInvalid={!!errors.githubId}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
+                    placeholder="GitHubのIDを入力"
                   />
                   {errors.githubId && (
                     <Text color="red.500" fontSize="sm">
@@ -251,10 +291,15 @@ export const Register = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>Qiita ID</FormLabel>
+                  <FormLabel htmlFor="qiita-input">Qiita ID</FormLabel>
                   <Input
+                    id="qiita-input"
                     {...register('qiitaId')}
                     isInvalid={!!errors.qiitaId}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
+                    placeholder="QiitaのIDを入力"
                   />
                   {errors.qiitaId && (
                     <Text color="red.500" fontSize="sm">
@@ -263,8 +308,16 @@ export const Register = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>X ID</FormLabel>
-                  <Input {...register('xId')} isInvalid={!!errors.xId} />
+                  <FormLabel htmlFor="x-input">X ID</FormLabel>
+                  <Input
+                    id="x-input"
+                    {...register('xId')}
+                    isInvalid={!!errors.xId}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
+                    placeholder="XのIDを入力"
+                  />
                   {errors.xId && (
                     <Text color="red.500" fontSize="sm">
                       {errors.xId.message}
@@ -274,24 +327,26 @@ export const Register = () => {
               </Stack>
             </CardBody>
             {/* フォームの送信ボタン */}
-            <CardFooter>
-              <Box mt={4}>
+            <CardFooter flexDirection="column" bg="gray.50">
+              {' '}
+              {/* フッター部分の背景色 */}
+              <Box mt={4} w="100%">
                 <Button
                   type="submit"
                   colorScheme="blue"
                   w="100%"
-                  onClick={(e) => {
-                    console.log('送信ボタンクリック');
-                  }}
+                  _hover={{ bg: 'blue.600' }} // ホバー時の色を少し濃くする
+                  data-testid="register-button"
                 >
                   登録
                 </Button>
               </Box>
-              <Box mt={4}>
+              <Box mt={4} w="100%">
                 <Button
                   colorScheme="orange"
                   variant="outline"
                   w="100%"
+                  _hover={{ bg: 'orange.50' }} // ホバー時の背景色
                   onClick={() => navigate(-1)}
                 >
                   戻る

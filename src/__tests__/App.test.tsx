@@ -6,7 +6,10 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { getUserSkillById } from '../lib/userSkill';
 
 /**
- * モックの作成
+ * モックの設定
+ * - Supabase API: データベースとのやり取りをモック化
+ * - ユーザースキル関連API: カード表示に必要なデータ取得をモック化
+ * - ユーザー登録・更新API: ユーザーデータ操作をモック化
  */
 // Supabaseクライアントのモック
 jest.mock('@supabase/supabase-js', () => ({
@@ -22,13 +25,13 @@ jest.mock('@supabase/supabase-js', () => ({
   })),
 }));
 
-// ユーザーカード表示用
+// ユーザーカード表示用API
 jest.mock('../lib/userSkill', () => ({
   getUserSkillById: jest.fn(),
   getUserSkillForEdit: jest.fn(),
 }));
 
-// ユーザーカード登録、更新用
+// ユーザーカード登録、更新用API
 jest.mock('../lib/user', () => ({
   insertUser: jest.fn().mockResolvedValue(true),
   updateUser: jest.fn().mockResolvedValue(true),
@@ -38,39 +41,32 @@ jest.mock('../lib/user', () => ({
   }),
 }));
 
-/**
- * テストケース
- */
-// タイトル表示
+// アプリ全体の基本機能テスト
 describe('App Component', () => {
-  it('タイトルの表示', () => {
+  it('タイトルが正しく表示される', () => {
     render(
       <ChakraProvider>
         <App />
       </ChakraProvider>
     );
 
-    // タイトルの要素を取得
     const titleElement = screen.getByTestId('title');
-
-    // アサーション
     expect(titleElement).toHaveTextContent('名刺アプリ');
   });
 });
 
-// 名刺カード表示
+// ユーザーカード表示機能のテスト
 describe('UserCard Component', () => {
   afterEach(() => {
-    // テスト後のクリーンアップ
     jest.resetAllMocks();
   });
 
-  it('名刺カードの表示', async () => {
-    // ユーザーイベントのセットアップ
+  it('IDを入力して名刺カードが正しく表示される', async () => {
+    // テストユーザー操作の準備
     const user = userEvent.setup();
 
-    // モックユーザーデータ
-    const mockUser = {
+    // テスト用のユーザーデータを設定
+    const mockUserData = {
       user_id: 'testuser',
       name: 'テストユーザー',
       description: '<p>これはテスト用の自己紹介です</p>',
@@ -84,25 +80,25 @@ describe('UserCard Component', () => {
       created_at: '2025-01-01 12:00:00',
     };
 
-    // モック関数を設定
-    (getUserSkillById as jest.Mock).mockResolvedValue(mockUser);
+    // モック関数の戻り値を設定
+    (getUserSkillById as jest.Mock).mockResolvedValue(mockUserData);
 
-    // コンポーネントをレンダリング
+    // アプリをレンダリング
     render(
       <ChakraProvider>
         <App />
       </ChakraProvider>
     );
 
-    // ホーム画面のID入力フィールドを探して入力
+    // ホーム画面でIDを入力
     const idInput = await waitFor(() => screen.getByTestId('id-input'));
     await user.type(idInput, 'testuser');
 
-    //「名刺を見る」ボタンをクリック
+    // 「名刺を見る」ボタンをクリック
     const viewButton = await waitFor(() => screen.getByTestId('view-button'));
     await user.click(viewButton);
 
-    // 非同期処理が完了するのを待つ
+    // ユーザー名が表示されることを確認
     await waitFor(
       () => {
         expect(screen.queryByTestId('user-name')).toBeInTheDocument();
@@ -110,26 +106,23 @@ describe('UserCard Component', () => {
       { timeout: 3000 }
     );
 
-    // 自己紹介が表示されていることを確認
+    // 自己紹介が表示されることを確認
     await waitFor(() => {
       const userName = screen.queryByTestId('user-name');
       expect(userName).toBeInTheDocument();
     });
 
-    // 各スキルが表示されていることを確認
+    // スキルが表示されることを確認
     await waitFor(() => {
       expect(screen.queryByText('JavaScript')).toBeInTheDocument();
       expect(screen.queryByText('React')).toBeInTheDocument();
     });
 
-    // GitHubアイコン、qiitaアイコン、xアイコンが表示されていることを確認
+    // SNSアイコンが表示されることを確認
     await waitFor(() => {
-      const githubIcon = screen.queryByTestId('github-icon');
-      expect(githubIcon).toBeInTheDocument();
-      const qiitaIcon = screen.queryByTestId('qiita-icon');
-      expect(qiitaIcon).toBeInTheDocument();
-      const xIcon = screen.queryByTestId('x-icon');
-      expect(xIcon).toBeInTheDocument();
+      expect(screen.queryByTestId('github-icon')).toBeInTheDocument();
+      expect(screen.queryByTestId('qiita-icon')).toBeInTheDocument();
+      expect(screen.queryByTestId('x-icon')).toBeInTheDocument();
     });
   });
 });
