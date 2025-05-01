@@ -1,12 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from '../App';
 import '@testing-library/jest-dom';
 import { ChakraProvider } from '@chakra-ui/react';
-import { getUserSkillById } from '../lib/userSkill';
-import { MemoryRouter, Route, Routes } from 'react-router';
+import { MemoryRouter } from 'react-router';
 import { Home } from '../components/Home';
-import { Register } from '../components/Register';
 
 /**
  * モックの設定

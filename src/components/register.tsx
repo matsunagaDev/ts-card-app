@@ -29,7 +29,7 @@ import { checkUserExists, insertUser } from '../lib/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserForm } from '@/domain/interfaces/userForm';
 
-export const Register = () => {
+export const Register: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [skills, setSkill] = useState<Skill[]>([]);

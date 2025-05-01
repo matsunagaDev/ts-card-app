@@ -82,6 +82,7 @@ export async function getUserSkillForEdit(userId: string): Promise<User> {
   // スキルIDのリストを作成（編集フォームのデフォルト値用）
   const skillIds =
     data.user_skill?.map((item: any) => Number(item.skill_id)) || [];
+  console.log('変換後のスキルID:', skillIds);
 
   // 編集用：IDのみのフォーマット
   const userData = {
