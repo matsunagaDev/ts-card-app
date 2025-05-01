@@ -128,7 +128,6 @@ export const UserCard = () => {
                         display="flex"
                         alignItems="center"
                         gap={2}
-                        data-testid={`skill-item-${skill.id}`}
                       >
                         <Box
                           as="span"
@@ -137,7 +136,9 @@ export const UserCard = () => {
                           borderRadius="full"
                           bg="teal.500"
                         />
-                        <Text textAlign="center">{skill.name}</Text>
+                        <Text textAlign="center" data-testid="skill-item">
+                          {skill.name}
+                        </Text>
                       </ListItem>
                     ))}
                   </List>

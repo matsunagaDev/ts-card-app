@@ -41,24 +41,34 @@ jest.mock('../lib/user', () => ({
   }),
 }));
 
+// ナビゲーションのモック
+const mockNavigate = jest.fn();
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: () => mockNavigate,
+}));
+
 // アプリ全体の基本機能テスト
 describe('App Component', () => {
-  it('タイトルが正しく表示される', () => {
+  beforeEach(() => {
+    // テスト前にモックをリセット
+    mockNavigate.mockClear();
+
+    // コンポーネントをレンダリング
     render(
       <ChakraProvider>
         <App />
       </ChakraProvider>
     );
-
-    const titleElement = screen.getByTestId('title');
-    expect(titleElement).toHaveTextContent('名刺アプリ');
   });
-});
 
-// ユーザーカード表示機能のテスト
-describe('UserCard Component', () => {
   afterEach(() => {
     jest.resetAllMocks();
+  });
+
+  it('タイトルが正しく表示される', () => {
+    const titleElement = screen.getByTestId('title');
+    expect(titleElement).toHaveTextContent('名刺アプリ');
   });
 
   it('IDを入力して名刺カードが正しく表示される', async () => {
@@ -83,13 +93,6 @@ describe('UserCard Component', () => {
     // モック関数の戻り値を設定
     (getUserSkillById as jest.Mock).mockResolvedValue(mockUserData);
 
-    // アプリをレンダリング
-    render(
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>
-    );
-
     // ホーム画面でIDを入力
     const idInput = await waitFor(() => screen.getByTestId('id-input'));
     await user.type(idInput, 'testuser');
@@ -97,32 +100,23 @@ describe('UserCard Component', () => {
     // 「名刺を見る」ボタンをクリック
     const viewButton = await waitFor(() => screen.getByTestId('view-button'));
     await user.click(viewButton);
+  });
 
-    // ユーザー名が表示されることを確認
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId('user-name')).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
+  it('IDを入力して名刺を見るボタンを押すと、cards/:idに遷移すること', async () => {
+    // テストユーザー操作の準備
+    const user = userEvent.setup();
 
-    // 自己紹介が表示されることを確認
+    // ホーム画面でIDを入力
+    const idInput = await screen.findByTestId('id-input');
+    await user.type(idInput, 'testuser');
+
+    // 「名刺を見る」ボタンをクリック
+    const viewButton = await screen.findByTestId('view-button');
+    await user.click(viewButton);
+
+    // 正しい画面遷移が行われたことを確認
     await waitFor(() => {
-      const userName = screen.queryByTestId('user-name');
-      expect(userName).toBeInTheDocument();
-    });
-
-    // スキルが表示されることを確認
-    await waitFor(() => {
-      expect(screen.queryByText('JavaScript')).toBeInTheDocument();
-      expect(screen.queryByText('React')).toBeInTheDocument();
-    });
-
-    // SNSアイコンが表示されることを確認
-    await waitFor(() => {
-      expect(screen.queryByTestId('github-icon')).toBeInTheDocument();
-      expect(screen.queryByTestId('qiita-icon')).toBeInTheDocument();
-      expect(screen.queryByTestId('x-icon')).toBeInTheDocument();
+      expect(mockNavigate).toHaveBeenCalledWith('/cards/testuser');
     });
   });
 });

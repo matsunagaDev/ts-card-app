@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { UserCard } from './components/UserCard';
 import { Box } from '@chakra-ui/react';
-import { Register } from './components/register';
+import { Register } from './components/Register';
 import { Home } from './components/Home';
 import { Edit } from './components/Edit';
 

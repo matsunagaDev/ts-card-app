@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { MemoryRouter } from 'react-router';
-import { Register } from '../components/register';
+import { Register } from '../components/Register';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
