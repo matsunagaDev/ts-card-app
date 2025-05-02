@@ -32,4 +32,3 @@ cleanupAllUserData()
   .catch((error) => {
     console.error('エラー:', error);
   });
-//     .delete()

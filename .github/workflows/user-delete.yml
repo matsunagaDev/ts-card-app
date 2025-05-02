@@ -1,9 +1,8 @@
 name: schedule delete user
-# This workflow is triggered by a cron schedule and runs a job to delete users from Supabase.
 
 on:
   schedule:
-    - cron: '45 5 * * *'
+    - cron: '* 21 * * *'
   workflow_dispatch: # 手動実行も可能
 
 jobs:
