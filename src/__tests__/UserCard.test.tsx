@@ -48,23 +48,20 @@ describe('UserCard', () => {
       created_at: '2025-01-01 12:00:00',
     });
 
-    // 状態更新を act でラップ
-    await act(async () => {
-      render(
-        <MemoryRouter initialEntries={['/cards/testuser']}>
-          <Routes>
-            <Route
-              path="/cards/:id"
-              element={
-                <ChakraProvider>
-                  <UserCard />
-                </ChakraProvider>
-              }
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
+    render(
+      <MemoryRouter initialEntries={['/cards/testuser']}>
+        <Routes>
+          <Route
+            path="/cards/:id"
+            element={
+              <ChakraProvider>
+                <UserCard />
+              </ChakraProvider>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
   });
 
   it('ユーザー名が表示されていること', async () => {
