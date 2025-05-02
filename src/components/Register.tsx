@@ -157,14 +157,15 @@ export const Register: React.FC = () => {
         minH={'100vh'}
         py={8}
         overflow={'auto'}
-        bg="gray.50" // 全体の背景色を淡いグレーに
+        bg="gray.50"
       >
         <Card
           maxW="400px"
+          w={{ base: '90%', md: '400px' }}
           my={4}
-          boxShadow="lg" // シャドウを追加して浮き上がり感を出す
-          bg="white" // カードの背景色
-          borderRadius="lg" // 角を丸くする
+          boxShadow="lg"
+          bg="white"
+          borderRadius="lg"
         >
           <form
             onSubmit={handleSubmit((data) => {

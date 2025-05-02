@@ -86,15 +86,27 @@ export const Home = () => {
 
   return (
     <>
-      <Flex alignItems={'center'} justifyContent={'center'} h={'100vh'}>
-        <Card>
-          <CardHeader>
-            <Heading data-testid="title" textAlign={'center'}>
+      <Flex
+        alignItems={'center'}
+        justifyContent={'center'}
+        minH={'100vh'}
+        py={8}
+        overflow={'auto'}
+        bg="gray.50"
+      >
+        <Card
+          maxW="400px"
+          w={{ base: '90%', md: '400px' }}
+          boxShadow="lg"
+          borderRadius="lg"
+          bg="white"
+        >
+          <CardHeader bg="blue.50">
+            <Heading data-testid="title" textAlign={'center'} color="blue.700">
               名刺アプリ
             </Heading>
           </CardHeader>
           <CardBody>
-            {/* react-hook-formのuseFormを使用して、フォームの状態を管理 */}
             <form onSubmit={onSubmit} data-testid="search-form">
               <FormControl>
                 <FormLabel>ID</FormLabel>
@@ -104,6 +116,9 @@ export const Home = () => {
                   autoFocus
                   placeholder="IDを入力"
                   data-testid="id-input"
+                  bg="white"
+                  borderColor="gray.300"
+                  _hover={{ borderColor: 'blue.300' }}
                 />
                 {errors.id && (
                   <Text color="red.500" fontSize="sm">
@@ -115,6 +130,7 @@ export const Home = () => {
                     type="submit"
                     colorScheme="blue"
                     w="100%"
+                    _hover={{ bg: 'blue.600' }}
                     data-testid="view-button"
                   >
                     名刺を見る
@@ -123,11 +139,18 @@ export const Home = () => {
               </FormControl>
             </form>
           </CardBody>
-          <CardFooter justifyContent="center" width="100%">
+          <CardFooter
+            justifyContent="center"
+            width="100%"
+            bg="gray.50"
+            borderBottomRadius="lg"
+          >
             <Link
               color="teal.500"
               onClick={onRegister}
               data-testid="register-link"
+              fontWeight="medium"
+              _hover={{ textDecoration: 'underline', color: 'teal.600' }}
             >
               新規登録
             </Link>

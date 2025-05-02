@@ -161,25 +161,41 @@ export const Edit = () => {
    */
   return (
     <>
-      <Flex alignItems={'center'} justifyContent={'center'} h={'100vh'}>
-        <Card maxW="400px">
+      <Flex
+        alignItems={'center'}
+        justifyContent={'center'}
+        minH={'100vh'}
+        py={8}
+        overflow={'auto'}
+        bg="gray.50"
+      >
+        <Card
+          maxW="400px"
+          w={{ base: '90%', md: '400px' }}
+          my={4}
+          boxShadow="lg"
+          bg="white"
+          borderRadius="lg"
+        >
           <form
             onSubmit={handleSubmit(onUpdateUser, (formErrors) => {
               console.log('バリデーションエラー:', formErrors);
             })}
           >
-            <CardHeader>
-              <Heading size="md" textAlign="center">
+            <CardHeader bg="blue.50">
+              <Heading size="md" textAlign="center" color="blue.700">
                 編集
               </Heading>
             </CardHeader>
 
-            <CardBody>
+            <CardBody maxH={{ base: '60vh', md: 'none' }} overflow="auto">
               <Stack spacing={4}>
                 <Box>
                   <FormLabel>好きな英単語</FormLabel>
                   <Box>
-                    <Heading size="lg">{user?.user_id}</Heading>
+                    <Heading size="lg" color="blue.700">
+                      {user?.user_id}
+                    </Heading>
                   </Box>
                 </Box>
                 <Box>
@@ -188,6 +204,9 @@ export const Edit = () => {
                     placeholder="名前を入力"
                     {...register('name')}
                     isInvalid={!!errors.name}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
                   />
                   {errors.name && (
                     <Text color="red.500" fontSize="sm">
@@ -201,6 +220,9 @@ export const Edit = () => {
                     placeholder="<h1>タグも使用可能です</h1>"
                     {...register('description')}
                     isInvalid={!!errors.description}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
                   />
                   {errors.description && (
                     <Text color="red.500" fontSize="sm">
@@ -247,6 +269,9 @@ export const Edit = () => {
                   <Input
                     {...register('githubId')}
                     isInvalid={!!errors.githubId}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
                   />
                   {errors.githubId && (
                     <Text color="red.500" fontSize="sm">
@@ -259,6 +284,9 @@ export const Edit = () => {
                   <Input
                     {...register('qiitaId')}
                     isInvalid={!!errors.qiitaId}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
                   />
                   {errors.qiitaId && (
                     <Text color="red.500" fontSize="sm">
@@ -268,7 +296,13 @@ export const Edit = () => {
                 </Box>
                 <Box>
                   <FormLabel>X ID</FormLabel>
-                  <Input {...register('xId')} isInvalid={!!errors.xId} />
+                  <Input
+                    {...register('xId')}
+                    isInvalid={!!errors.xId}
+                    bg="white"
+                    borderColor="gray.300"
+                    _hover={{ borderColor: 'blue.300' }}
+                  />
                   {errors.xId && (
                     <Text color="red.500" fontSize="sm">
                       {errors.xId.message}
@@ -277,23 +311,29 @@ export const Edit = () => {
                 </Box>
               </Stack>
             </CardBody>
-            {/* フォームの送信ボタン */}
-            <CardFooter justifyContent={'space-between'}>
-              <Box mt={4}>
-                <Button
-                  colorScheme="orange"
-                  variant="outline"
-                  w="100%"
-                  onClick={() => navigate(-1)}
-                >
-                  戻る
-                </Button>
-              </Box>
-              <Box mt={4}>
-                <Button type="submit" colorScheme="blue" w="100%">
-                  更新
-                </Button>
-              </Box>
+
+            <CardFooter
+              flexDirection={{ base: 'column', sm: 'row' }}
+              bg="gray.50"
+              gap={4}
+            >
+              <Button
+                colorScheme="orange"
+                variant="outline"
+                flex="1"
+                onClick={() => navigate(-1)}
+                _hover={{ bg: 'orange.50' }}
+              >
+                戻る
+              </Button>
+              <Button
+                type="submit"
+                colorScheme="blue"
+                flex="1"
+                _hover={{ bg: 'blue.600' }}
+              >
+                更新
+              </Button>
             </CardFooter>
           </form>
         </Card>

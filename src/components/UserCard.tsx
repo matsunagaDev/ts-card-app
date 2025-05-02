@@ -25,8 +25,8 @@ import {
 } from '@chakra-ui/react';
 import * as DOMPurify from 'dompurify';
 import { getUserSkillById } from '../lib/userSkill';
-import { FaGithub, FaTwitter } from 'react-icons/fa';
-import { SiQiita } from 'react-icons/si';
+import { FaGithub } from 'react-icons/fa';
+import { SiQiita, SiX } from 'react-icons/si';
 
 export const UserCard = () => {
   const { id } = useParams();
@@ -71,16 +71,22 @@ export const UserCard = () => {
    * 画面レイアウト
    */
   return (
-    <Box bg="gray.100" minH="100vh" py={4}>
+    <Box bg="gray.50" minH="100vh" py={8} px={4}>
       <Container maxW="container.sm">
         <VStack spacing={4}>
-          <Card w="100%" bg="white">
-            <CardHeader>
+          <Card
+            w="100%"
+            bg="white"
+            boxShadow="lg"
+            borderRadius="lg"
+            overflow="hidden"
+          >
+            <CardHeader bg="blue.50">
               <Flex gap="4">
                 <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
                   <Avatar name={user?.name} src="" />
                   <Box>
-                    <Heading size="lg" data-testid="user-name">
+                    <Heading size="lg" data-testid="user-name" color="blue.700">
                       {user?.name}
                     </Heading>
                   </Box>
@@ -88,14 +94,18 @@ export const UserCard = () => {
               </Flex>
             </CardHeader>
 
-            <CardBody>
-              <Stack spacing="4" align="stretch">
+            <CardBody maxH={{ base: 'auto', md: 'none' }} overflow="auto">
+              <Stack spacing="6" align="stretch">
                 <Box>
-                  <Heading size="md" textTransform="uppercase" mb={4}>
+                  <Heading
+                    size="md"
+                    textTransform="uppercase"
+                    mb={4}
+                    color="blue.700"
+                  >
                     自己紹介
                   </Heading>
 
-                  {/* 方法1: Chakra UIのdangerouslySetInnerHTML代替手段を使用 */}
                   <Text
                     data-testid="user-description"
                     dangerouslySetInnerHTML={{
@@ -104,10 +114,20 @@ export const UserCard = () => {
                       ),
                     }}
                     textAlign={'left'}
+                    bg="white"
+                    p={3}
+                    borderRadius="md"
+                    borderColor="gray.200"
+                    borderWidth="1px"
                   />
                 </Box>
                 <Box>
-                  <Heading size="md" textTransform="uppercase" mb={4}>
+                  <Heading
+                    size="md"
+                    textTransform="uppercase"
+                    mb={4}
+                    color="blue.700"
+                  >
                     スキル
                   </Heading>
                   <List
@@ -115,6 +135,9 @@ export const UserCard = () => {
                     styleType="none"
                     pl={4}
                     data-testid="skill-list"
+                    bg="white"
+                    p={3}
+                    borderRadius="md"
                   >
                     {user?.skills?.map((skill) => (
                       <ListItem
@@ -139,10 +162,21 @@ export const UserCard = () => {
                 </Box>
 
                 <Box>
-                  <Heading size="md" textTransform="uppercase" mb={4}>
+                  <Heading
+                    size="md"
+                    textTransform="uppercase"
+                    mb={4}
+                    color="blue.700"
+                  >
                     SNS
                   </Heading>
-                  <Flex justify="center" align="center">
+                  <Flex
+                    justify="center"
+                    align="center"
+                    bg="white"
+                    p={3}
+                    borderRadius="md"
+                  >
                     <Wrap spacing={8} justify="center" data-testid="sns-links">
                       {user?.github_id && user.github_id !== null && (
                         <WrapItem>
@@ -153,10 +187,19 @@ export const UserCard = () => {
                           >
                             <IconButton
                               aria-label="GitHub"
-                              icon={<FaGithub size="24px" />}
+                              icon={<FaGithub size="32px" />}
                               variant="ghost"
                               size="lg"
-                              _hover={{ bg: 'gray.100' }}
+                              color="gray.700"
+                              w="70px"
+                              h="70px"
+                              borderRadius="full"
+                              transition="all 0.2s ease"
+                              _hover={{
+                                bg: 'gray.100',
+                                transform: 'scale(1.1)',
+                                boxShadow: 'md',
+                              }}
                               data-testid="github-icon"
                             />
                           </Link>
@@ -172,10 +215,19 @@ export const UserCard = () => {
                           >
                             <IconButton
                               aria-label="Qiita"
-                              icon={<SiQiita size="24px" />}
+                              icon={<SiQiita size="32px" />}
                               variant="ghost"
                               size="lg"
-                              _hover={{ bg: 'gray.100' }}
+                              color="teal.600"
+                              w="70px"
+                              h="70px"
+                              borderRadius="full"
+                              transition="all 0.2s ease"
+                              _hover={{
+                                bg: 'teal.50',
+                                transform: 'scale(1.1)',
+                                boxShadow: 'md',
+                              }}
                               data-testid="qiita-icon"
                             />
                           </Link>
@@ -191,10 +243,19 @@ export const UserCard = () => {
                           >
                             <IconButton
                               aria-label="X (Twitter)"
-                              icon={<FaTwitter size="24px" />}
+                              icon={<SiX size="32px" />}
                               variant="ghost"
                               size="lg"
-                              _hover={{ bg: 'gray.100' }}
+                              color="black"
+                              w="70px"
+                              h="70px"
+                              borderRadius="full"
+                              transition="all 0.2s ease"
+                              _hover={{
+                                bg: 'gray.100',
+                                transform: 'scale(1.1)',
+                                boxShadow: 'md',
+                              }}
                               data-testid="x-icon"
                             />
                           </Link>
@@ -205,24 +266,24 @@ export const UserCard = () => {
                 </Box>
               </Stack>
             </CardBody>
-            <CardFooter>
-              <Flex justify="space-between" w="100%">
-                <Button
-                  onClick={() => navigate('/')}
-                  colorScheme="blue"
-                  data-testid="back-button"
-                >
-                  戻る
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => {
-                    navigate(`/cards/${id}/edit`);
-                  }}
-                >
-                  編集
-                </Button>
-              </Flex>
+            <CardFooter bg="gray.50" justifyContent="space-between">
+              <Button
+                onClick={() => navigate('/')}
+                colorScheme="blue"
+                data-testid="back-button"
+                _hover={{ bg: 'blue.600' }}
+              >
+                戻る
+              </Button>
+              <Button
+                colorScheme="teal"
+                onClick={() => {
+                  navigate(`/cards/${id}/edit`);
+                }}
+                _hover={{ bg: 'teal.600' }}
+              >
+                編集
+              </Button>
             </CardFooter>
           </Card>
         </VStack>
