@@ -3,7 +3,7 @@ name: schedule delete user
 
 on:
   schedule:
-    - cron: '30 5 * * *'
+    - cron: '45 5 * * *'
   workflow_dispatch: # 手動実行も可能
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Run batch to delete users
-        run: npx ts-node --esm ./batch/index.ts
+        run: npx tsx ./batch/index.ts
         env:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
