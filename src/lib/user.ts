@@ -158,42 +158,66 @@ export async function updateUser(formData: UserForm): Promise<boolean> {
   }
 }
 
-// ユーザーを削除する
-export async function deleteUser(userId: string): Promise<boolean> {
+/**
+ * 指定した時間より前に作成されたユーザーを削除する
+ * （24時間前より古いデータを削除するために使用）
+ */
+export async function deleteUsersCreatedBefore(
+  beforeTime: Date
+): Promise<boolean> {
   try {
-    // まず子テーブル（user_skill）からデータを削除
+    // 指定時間をISO文字列に変換（UTCタイムスタンプ）
+    const timeString = beforeTime.toISOString();
+    console.log(`${timeString} より前に作成されたユーザーを削除します`);
+
+    // 削除対象のユーザーIDを取得
+    const { data: targetUsers, error: fetchError } = await supabase
+      .from('users')
+      .select('user_id')
+      .lt('created_at', timeString);
+
+    if (fetchError) {
+      console.error('削除対象ユーザーの取得に失敗:', fetchError);
+      return false;
+    }
+
+    if (!targetUsers || targetUsers.length === 0) {
+      console.log('削除対象のユーザーがありません');
+      return true;
+    }
+
+    const userIds = targetUsers.map((user) => user.user_id);
+    console.log(`${userIds.length}件のユーザーを削除します`);
+
+    // 外部キー制約のため、まずuser_skillを削除
     const { error: skillError } = await supabase
       .from('user_skill')
       .delete()
-      .eq('user_id', userId);
+      .in('user_id', userIds);
 
     if (skillError) {
       console.error('スキル削除エラー:', skillError);
-      return false; // エラー時はfalseを返す
+      return false;
     }
 
-    // 次に親テーブル（users）からデータを削除
+    // 次にusersを削除
     const { error: userError } = await supabase
       .from('users')
       .delete()
-      .eq('user_id', userId);
+      .in('user_id', userIds);
 
     if (userError) {
       console.error('ユーザー削除エラー:', userError);
-      return false; // エラー時はfalseを返す
+      return false;
     }
 
-    return true; // 成功時はtrueを返す
+    console.log(`${userIds.length}件のユーザーとそのスキルを削除しました`);
+    return true;
   } catch (error) {
-    console.error('予期しないエラーが発生しました:', error);
-    return false; // 例外発生時もfalseを返す
+    console.error('ユーザー削除中に予期しないエラーが発生:', error);
+    return false;
   }
 }
-
-/**
- * バッチ処理用の関数
- * ユーザーを一括削除する
- */
 
 // ユーザーの全削除（バッチ処理用）
 export async function deleteAllUsers(): Promise<boolean> {

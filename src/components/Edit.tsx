@@ -130,14 +130,6 @@ export const Edit = () => {
 
         // 結果に基づいてトースト表示
         if (result) {
-          toast({
-            title: '更新完了',
-            description: 'ユーザー情報の更新に成功しました',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-          });
-
           // 更新成功時はユーザー詳細画面に遷移
           navigate(`/cards/${formData.user_id}`);
         } else {

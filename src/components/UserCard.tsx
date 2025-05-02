@@ -36,38 +36,32 @@ export const UserCard = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userPromise = new Promise(async (resolve, reject) => {
-        try {
-          if (!id) {
-            reject(new Error('URLパラメータのIDが見つかりません'));
-            return;
-          }
-          console.log(`${id}のユーザー情報を取得します`);
-
-          const userData = await getUserSkillById(id);
-          setUser(userData);
-          resolve(userData); // 成功時
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          reject(error); // 失敗時
+      try {
+        if (!id) {
+          toast({
+            title: 'エラー発生',
+            description: 'IDが見つかりません',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+          return;
         }
-      });
+        console.log(`${id}のユーザー情報を取得します`);
 
-      // Promiseの結果に基づいてToastを表示
-      toast.promise(userPromise, {
-        success: {
-          title: 'ユーザー情報取得完了',
-          description: 'ユーザー情報の取得に成功しました',
-        },
-        error: {
+        const userData = await getUserSkillById(id);
+        setUser(userData);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        // エラー時のみトースト表示
+        toast({
           title: 'エラー発生',
           description: 'ユーザー情報の取得に失敗しました',
-        },
-        loading: {
-          title: '読み込み中',
-          description: 'ユーザー情報を取得しています',
-        },
-      });
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     };
 
     fetchUser();
