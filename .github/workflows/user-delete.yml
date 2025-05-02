@@ -2,7 +2,7 @@ name: schedule delete user
 
 on:
   schedule:
-    - cron: '40 * * * *' # 毎時40分に実行（試験用）
+    - cron: '50 * * * *' # 毎時47分に実行（試験用）
   workflow_dispatch: # 手動実行も可能
 
 jobs:
