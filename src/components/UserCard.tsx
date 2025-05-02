@@ -150,7 +150,7 @@ export const UserCard = () => {
                   </Heading>
                   <Flex justify="center" align="center">
                     <Wrap spacing={8} justify="center" data-testid="sns-links">
-                      {user?.github_id && (
+                      {user?.github_id && user.github_id !== null && (
                         <WrapItem>
                           <Link
                             href={user.github_id}
@@ -169,7 +169,7 @@ export const UserCard = () => {
                         </WrapItem>
                       )}
 
-                      {user?.qiita_id && (
+                      {user?.qiita_id && user.qiita_id !== null && (
                         <WrapItem>
                           <Link
                             href={user.qiita_id}
@@ -188,7 +188,7 @@ export const UserCard = () => {
                         </WrapItem>
                       )}
 
-                      {user?.x_id && (
+                      {user?.x_id && user.x_id !== null && (
                         <WrapItem>
                           <Link
                             href={user.x_id}

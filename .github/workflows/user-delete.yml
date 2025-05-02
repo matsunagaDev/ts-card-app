@@ -1,0 +1,29 @@
+name: schedule delete user
+# This workflow is triggered by a cron schedule and runs a job to delete users from Supabase.
+
+on:
+  schedule:
+    - cron: '30 5 * * *'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  delete-users:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run batch to delete users
+        run: npx ts-node --esm ./batch/index.ts
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}

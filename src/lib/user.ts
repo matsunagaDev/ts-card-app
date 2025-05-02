@@ -161,18 +161,7 @@ export async function updateUser(formData: UserForm): Promise<boolean> {
 // ユーザーを削除する
 export async function deleteUser(userId: string): Promise<boolean> {
   try {
-    // ユーザーの削除
-    const { error: userError } = await supabase
-      .from('users')
-      .delete()
-      .eq('user_id', userId);
-
-    if (userError) {
-      console.error('ユーザー削除エラー:', userError);
-      return false; // エラー時はfalseを返す
-    }
-
-    // スキルの削除
+    // まず子テーブル（user_skill）からデータを削除
     const { error: skillError } = await supabase
       .from('user_skill')
       .delete()
@@ -183,9 +172,64 @@ export async function deleteUser(userId: string): Promise<boolean> {
       return false; // エラー時はfalseを返す
     }
 
+    // 次に親テーブル（users）からデータを削除
+    const { error: userError } = await supabase
+      .from('users')
+      .delete()
+      .eq('user_id', userId);
+
+    if (userError) {
+      console.error('ユーザー削除エラー:', userError);
+      return false; // エラー時はfalseを返す
+    }
+
     return true; // 成功時はtrueを返す
   } catch (error) {
     console.error('予期しないエラーが発生しました:', error);
     return false; // 例外発生時もfalseを返す
+  }
+}
+
+/**
+ * バッチ処理用の関数
+ * ユーザーを一括削除する
+ */
+
+// ユーザーの全削除（バッチ処理用）
+export async function deleteAllUsers(): Promise<boolean> {
+  try {
+    const { error: userError } = await supabase
+      .from('users')
+      .delete()
+      .neq('user_id', ''); // user_idが空でないユーザーを削除
+
+    if (userError) {
+      console.error('ユーザー全削除エラー:', userError);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('予期しないエラーが発生しました:', error);
+    return false;
+  }
+}
+
+// ユーザーの保持するスキルを全削除（バッチ処理用）
+export async function deleteAllUserSkills(): Promise<boolean> {
+  try {
+    const { error: skillError } = await supabase
+      .from('user_skill')
+      .delete()
+      .neq('user_id', ''); // user_idが空でないユーザーのスキルを削除
+
+    if (skillError) {
+      console.error('ユーザー全スキル削除エラー:', skillError);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error('予期しないエラーが発生しました:', error);
+    return false;
   }
 }

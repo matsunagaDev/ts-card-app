@@ -31,8 +31,6 @@ export async function getUserSkillById(userId: string): Promise<User> {
       name: relation.skills.name,
     })) || [];
 
-  console.log('変換後のスキルデータ:', skills);
-
   // 表示用：URL形式のSNSアカウント
   const userData = User.newUser(
     data.user_id,

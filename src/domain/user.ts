@@ -6,9 +6,9 @@ export class User {
     public name: string,
     public description: string,
     public skills: Skill[], // Array<Skill>よりもSkill[]の方が推奨
-    public github_id: string,
-    public qiita_id: string,
-    public x_id: string,
+    public github_id: string | null,
+    public qiita_id: string | null,
+    public x_id: string | null,
     public created_at: string
   ) {}
 
@@ -35,15 +35,27 @@ export class User {
     );
   }
 
-  public static githubAccount(github_id: string): string {
+  // githubアカウントのURL生成メソッド
+  public static githubAccount(github_id: string | null): string | null {
+    if (!github_id) {
+      return null;
+    }
     return `https://github.com/${github_id}`;
   }
 
-  public static qiitaAccount(qiita_id: string): string {
+  // qiitaアカウントのURL生成メソッド
+  public static qiitaAccount(qiita_id: string | null): string | null {
+    if (!qiita_id) {
+      return null;
+    }
     return `https://qiita.com/${qiita_id}`;
   }
 
-  public static xAccount(x_id: string): string {
+  // xアカウントのURL生成メソッド
+  public static xAccount(x_id: string | null): string | null {
+    if (!x_id) {
+      return null;
+    }
     return `https://x.com/${x_id}`;
   }
 }
