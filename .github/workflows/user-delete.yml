@@ -2,7 +2,7 @@ name: schedule delete user
 
 on:
   schedule:
-    - cron: '50 * * * *' # 毎時47分に実行（試験用）
+    - cron: '* 21 * * *' # utcとの時差は-9時間あるため、本来はAM6時に実行される
   workflow_dispatch: # 手動実行も可能
 
 jobs:
