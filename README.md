@@ -1,54 +1,124 @@
-# React + TypeScript + Vite
+# TS Card App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![CI/CD](https://github.com/matsunagaDev/ts-card-app/actions/workflows/firebase-deploy.yml/badge.svg)](https://github.com/matsunagaDev/ts-card-app/actions/workflows/firebase-deploy.yml)
 
-Currently, two official plugins are available:
+ユーザー情報とスキルを管理するシンプルな名刺アプリケーションです。
+React + TypeScript + Supabase で構築されています。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![スクリーンショット](./assets/images/card-app-home.png)
 
-## Expanding the ESLint configuration
+## 機能
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- ユーザー名刺の登録・表示・編集
+- ユーザースキルの管理
+- SNS 情報の連携（GitHub, Qiita, X）
+- 自動データクリーンアップ（前日登録したユーザーデータ）
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 技術スタック
+
+- **フロントエンド**: React 19, TypeScript, Chakra UI
+- **状態管理**: React Hook Form
+- **ルーティング**: React Router v6
+- **バックエンド**: Supabase
+- **テスト**: Jest, Testing Library
+- **CI/CD**: GitHub Actions
+
+## セットアップ
+
+### 必要条件
+
+- Node.js (バージョン 20)
+- npm または yarn
+- Supabase アカウント
+
+### インストール
+
+1. リポジトリをクローンする
+
+```bash
+git clone https://github.com/yourusername/ts-card-app.git
+cd ts-card-app
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. 依存関係をインストールする
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
 ```
+
+3. 環境変数を設定する
+
+`.env` ファイルを作成し、以下の内容を設定します：
+
+```
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+4. 開発サーバーを起動する
+
+```bash
+npm run dev
+```
+
+### データベース設定
+
+![スクリーンショット](./assets/images/supabase-schema-card-app.png)
+
+## 使用方法
+
+### 名刺の閲覧
+
+1. ホーム画面で名刺 ID を入力
+2. 「名刺を見る」ボタンをクリック
+
+### 名刺の登録
+
+1. ホーム画面で「新規登録」をクリック
+2. 必要情報を入力（英単語 ID、名前、自己紹介、スキル）
+3. オプションで SNS アカウントを入力
+4. 「登録」ボタンをクリック
+
+### 名刺の編集
+
+1. 名刺表示画面で「編集」ボタンをクリック
+2. 情報を編集
+3. 「更新」ボタンをクリック
+
+## プロジェクト構造
+
+```
+ts-card-app/
+├── .github/           # GitHub Actions設定
+├── batch/             # バッチ処理スクリプト
+├── public/            # 静的ファイル
+├── src/
+│   ├── __tests__/     # テストファイル
+│   ├── components/    # Reactコンポーネント
+│   ├── domain/        # ドメインモデル・型定義
+│   ├── lib/           # ビジネスロジック
+│   ├── utils/         # ユーティリティ関数
+│   └── validations/   # バリデーションスキーマ
+```
+
+## テスト
+
+テストを実行するには：
+
+```bash
+npm run test
+```
+
+## バッチ処理
+
+前日登録したユーザーデータを、毎日 AM6:00 に自動的に削除するバッチ処理があります。
+
+手動でバッチを実行するには以下を実行してください。
+
+```bash
+npx tsx ./batch/index.ts
+```
+
+## ライセンス
+
+[MIT](LICENSE)

@@ -1,29 +1,29 @@
-import { deleteUsersCreatedBefore } from '../src/lib/user';
+import { deleteUsersByDateRange } from '../src/lib/user';
 
 /**
- * 24時間以上前に登録されたユーザーデータを削除するバッチ処理
+ * 前日に登録されたユーザーデータを削除するバッチ処理
  */
-async function cleanupOldUserData() {
+async function cleanupYesterdayUserData() {
   try {
-    console.log('バッチ処理を開始: 24時間以上前のユーザーデータ削除');
+    console.log('バッチ処理を開始: 前日登録ユーザーデータの削除');
 
-    // 現在時刻から24時間前を計算
-    const dayAgo = new Date();
-    dayAgo.setHours(dayAgo.getHours() - 24);
+    const yesterday = new Date();
+    // 前日の日付を取得
+    yesterday.setDate(yesterday.getDate() - 1);
 
-    // タイムゾーンの差を確認するためにログ出力
-    console.log(`削除基準時刻（UTC）: ${dayAgo.toISOString()}`);
-    console.log(
-      `削除基準時刻（JST）: ${new Date(
-        dayAgo.getTime() + 9 * 60 * 60 * 1000
-      ).toISOString()}`
-    );
+    // 前日の00:00:00を設定
+    const startDate = new Date(yesterday);
+    startDate.setHours(0, 0, 0, 0);
+
+    // 前日の23:59:59を設定
+    const endDate = new Date(yesterday);
+    endDate.setHours(23, 59, 59, 999);
 
     // 削除処理実行
-    const result = await deleteUsersCreatedBefore(dayAgo);
+    const result = await deleteUsersByDateRange(startDate, endDate);
 
     if (result) {
-      console.log('ユーザーデータの削除に成功しました');
+      console.log('前日のユーザーデータの削除に成功しました');
     } else {
       throw new Error('ユーザーデータの削除に失敗しました');
     }
@@ -34,7 +34,7 @@ async function cleanupOldUserData() {
 }
 
 // スクリプト実行
-cleanupOldUserData()
+cleanupYesterdayUserData()
   .then(() => {
     console.log('バッチ処理が完了しました');
     process.exit(0); // 正常終了

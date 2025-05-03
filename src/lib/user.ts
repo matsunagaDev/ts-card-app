@@ -174,7 +174,7 @@ export async function deleteUsersCreatedBefore(
     const { data: targetUsers, error: fetchError } = await supabase
       .from('users')
       .select('user_id')
-      .lt('created_at', timeString);
+      .gt('created_at', timeString);
 
     if (fetchError) {
       console.error('削除対象ユーザーの取得に失敗:', fetchError);
@@ -219,41 +219,48 @@ export async function deleteUsersCreatedBefore(
   }
 }
 
-// ユーザーの全削除（バッチ処理用）
-export async function deleteAllUsers(): Promise<boolean> {
+/**
+ * 指定した日付範囲内に作成されたユーザーを削除する
+ */
+export async function deleteUsersByDateRange(
+  startTime: Date,
+  endTime: Date
+): Promise<boolean> {
   try {
-    const { error: userError } = await supabase
+    // 削除対象のユーザーIDを取得
+    const { data: users, error: fetchError } = await supabase
       .from('users')
-      .delete()
-      .neq('user_id', ''); // user_idが空でないユーザーを削除
+      .select('user_id')
+      .gte('created_at', startTime.toISOString())
+      .lt('created_at', endTime.toISOString());
 
-    if (userError) {
-      console.error('ユーザー全削除エラー:', userError);
-      return false;
+    if (fetchError || !users || users.length === 0) {
+      console.log('削除対象のユーザーがありません');
+      return !fetchError; // エラーがなければtrue、あればfalse
     }
 
-    return true;
-  } catch (error) {
-    console.error('予期しないエラーが発生しました:', error);
-    return false;
-  }
-}
+    const userIds = users.map((user) => user.user_id);
+    console.log(`${userIds.length}件のユーザーを削除します`);
 
-// ユーザーの保持するスキルを全削除（バッチ処理用）
-export async function deleteAllUserSkills(): Promise<boolean> {
-  try {
+    // 外部キー制約のため、順番に削除
     const { error: skillError } = await supabase
       .from('user_skill')
       .delete()
-      .neq('user_id', ''); // user_idが空でないユーザーのスキルを削除
+      .in('user_id', userIds);
 
     if (skillError) {
-      console.error('ユーザー全スキル削除エラー:', skillError);
+      console.error('スキル削除エラー:', skillError);
       return false;
     }
-    return true;
+
+    const { error: userError } = await supabase
+      .from('users')
+      .delete()
+      .in('user_id', userIds);
+
+    return !userError; // エラーがなければtrue、あればfalse
   } catch (error) {
-    console.error('予期しないエラーが発生しました:', error);
+    console.error('削除処理でエラーが発生:', error);
     return false;
   }
 }
