@@ -1,6 +1,14 @@
 # TS Card App
 
-[![CI/CD](https://github.com/matsunagaDev/ts-card-app/actions/workflows/firebase-deploy.yml/badge.svg)](https://github.com/matsunagaDev/ts-card-app/actions/workflows/firebase-deploy.yml)
+<p align="center">
+  <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black"/></a>&nbsp 
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/></a>&nbsp 
+  <img src="https://img.shields.io/badge/Chakra_UI-319795?style=flat-square&logo=chakraui&logoColor=white"/></a>&nbsp 
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white"/></a>&nbsp 
+  <img src="https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white"/></a>&nbsp 
+  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white"/></a>&nbsp 
+  <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/></a>&nbsp 
+</p>
 
 ユーザー情報とスキルを管理するシンプルな名刺アプリケーションです。
 React + TypeScript + Supabase で構築されています。
@@ -92,13 +100,13 @@ ts-card-app/
 ├── .github/           # GitHub Actions設定
 ├── batch/             # バッチ処理スクリプト
 ├── public/            # 静的ファイル
-├── src/
-│   ├── __tests__/     # テストファイル
-│   ├── components/    # Reactコンポーネント
-│   ├── domain/        # ドメインモデル・型定義
-│   ├── lib/           # ビジネスロジック
-│   ├── utils/         # ユーティリティ関数
-│   └── validations/   # バリデーションスキーマ
+└── src/
+    ├── __tests__/     # テストファイル
+    ├── components/    # Reactコンポーネント
+    ├── domain/        # ドメインモデル・型定義
+    ├── lib/           # ビジネスロジック
+    ├── utils/         # ユーティリティ関数
+    └── validations/   # バリデーションスキーマ
 ```
 
 ## テスト
@@ -118,7 +126,3 @@ npm run test
 ```bash
 npx tsx ./batch/index.ts
 ```
-
-## ライセンス
-
-[MIT](LICENSE)
