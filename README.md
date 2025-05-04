@@ -1,4 +1,4 @@
-# TS Card App
+<h1 align="center">名刺アプリ</h2>
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black"/></a>&nbsp 
@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/></a>&nbsp 
 </p>
 
-ユーザー情報とスキルを管理するシンプルな名刺アプリケーションです。
+ユーザー情報とスキルを管理するシンプルな名刺アプリです。
 React + TypeScript + Supabase で構築されています。
 
 ![スクリーンショット](./assets/images/card-app-home.png)
@@ -24,12 +24,37 @@ React + TypeScript + Supabase で構築されています。
 
 ## 技術スタック
 
-- **フロントエンド**: React 19, TypeScript, Chakra UI
-- **状態管理**: React Hook Form
-- **ルーティング**: React Router v6
-- **バックエンド**: Supabase
-- **テスト**: Jest, Testing Library
-- **CI/CD**: GitHub Actions
+| カテゴリ           | 技術            | 説明                        |
+| ------------------ | --------------- | --------------------------- |
+| **フロントエンド** | React 19        | UI ライブラリ               |
+|                    | TypeScript      | 型付き JavaScript           |
+|                    | Chakra UI       | UI コンポーネントライブラリ |
+|                    | React Router    | ルーティングライブラリ      |
+|                    | React Hook Form | フォーム状態管理            |
+| **バックエンド**   | Supabase        | BaaS プラットフォーム       |
+|                    | PostgreSQL      | リレーショナルデータベース  |
+| **テスト**         | Jest            | テストフレームワーク        |
+|                    | Testing Library | UI テストライブラリ         |
+| **CI/CD**          | GitHub Actions  | 自動化ワークフロー          |
+| **その他**         | DOMPurify       | XSS 対策                    |
+
+## データベース構成
+
+![ER図](./assets/images/supabase-schema-card-app.png)
+
+### テーブル構造
+
+| テーブル名     | 説明                           | 主なカラム                                                            |
+| -------------- | ------------------------------ | --------------------------------------------------------------------- |
+| **users**      | ユーザー基本情報               | user_id(PK), name, description, github_id, qiita_id, x_id, created_at |
+| **skills**     | スキルマスタ                   | id(PK), name                                                          |
+| **user_skill** | ユーザーとスキルの中間テーブル | id(PK), user_id(FK), skill_id(FK)                                     |
+
+### データベース構築方法
+
+1. Supabase プロジェクトを作成する
+
+2. `supabase/schema_dump.sql`を使用してデータベーステーブルを構築する
 
 ## セットアップ
 
@@ -63,15 +88,13 @@ VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
+> **重要**: `.env` ファイルは `.gitignore` に追加して、実際のキーや URL が公開リポジトリにコミットされないようにしてください。
+
 4. 開発サーバーを起動する
 
 ```bash
 npm run dev
 ```
-
-### データベース設定
-
-![スクリーンショット](./assets/images/supabase-schema-card-app.png)
 
 ## 使用方法
 
@@ -97,16 +120,19 @@ npm run dev
 
 ```
 ts-card-app/
-├── .github/           # GitHub Actions設定
-├── batch/             # バッチ処理スクリプト
-├── public/            # 静的ファイル
-└── src/
-    ├── __tests__/     # テストファイル
-    ├── components/    # Reactコンポーネント
-    ├── domain/        # ドメインモデル・型定義
-    ├── lib/           # ビジネスロジック
-    ├── utils/         # ユーティリティ関数
-    └── validations/   # バリデーションスキーマ
+├── .github/
+│   └── workflows/      # GitHub Actions設定
+├── batch/              # バッチ処理スクリプト
+├── public/             # 静的ファイル
+├── src/
+│   ├── __tests__/      # テストファイル
+│   ├── components/     # Reactコンポーネント
+│   ├── domain/         # ドメインモデル・型定義
+│   ├── lib/            # ビジネスロジック
+│   ├── utils/          # ユーティリティ関数
+│   └── validations/    # バリデーションスキーマ
+└── assets/
+    └── images/         # 画像ファイル
 ```
 
 ## テスト

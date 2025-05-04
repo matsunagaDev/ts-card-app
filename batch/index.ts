@@ -2,25 +2,44 @@ import { deleteUsersByDateRange } from '../src/lib/user';
 
 /**
  * 前日に登録されたユーザーデータを削除するバッチ処理
+ * 日本時間基準で前日のデータを削除
  */
 async function cleanupYesterdayUserData() {
   try {
-    console.log('バッチ処理を開始: 前日登録ユーザーデータの削除');
+    console.log('バッチ処理を開始: 日本時間で前日登録したユーザーデータの削除');
 
-    const yesterday = new Date();
-    // 前日の日付を取得
-    yesterday.setDate(yesterday.getDate() - 1);
+    // 現在の日本時間を取得（UTC+9時間）
+    const now = new Date();
+    const jstOffset = 9 * 60 * 60 * 1000; // JST時差: 9時間をミリ秒で
+    const jstNow = new Date(now.getTime() + jstOffset);
 
-    // 前日の00:00:00を設定
-    const startDate = new Date(yesterday);
-    startDate.setHours(0, 0, 0, 0);
+    // 日本時間での前日の日付
+    const jstYesterday = new Date(jstNow);
+    jstYesterday.setDate(jstYesterday.getDate() - 1);
 
-    // 前日の23:59:59を設定
-    const endDate = new Date(yesterday);
-    endDate.setHours(23, 59, 59, 999);
+    // 日本時間の前日00:00:00
+    const jstStartDate = new Date(jstYesterday);
+    jstStartDate.setHours(0, 0, 0, 0);
 
-    // 削除処理実行
-    const result = await deleteUsersByDateRange(startDate, endDate);
+    // 日本時間の前日23:59:59
+    const jstEndDate = new Date(jstYesterday);
+    jstEndDate.setHours(23, 59, 59, 999);
+
+    // JSTからUTCに変換（-9時間）
+    const utcStartDate = new Date(jstStartDate.getTime() - jstOffset);
+    const utcEndDate = new Date(jstEndDate.getTime() - jstOffset);
+
+    console.log(
+      `削除期間（日本時間）: ${jstStartDate.toLocaleString(
+        'ja-JP'
+      )} から ${jstEndDate.toLocaleString('ja-JP')}`
+    );
+    console.log(
+      `削除期間（UTC）: ${utcStartDate.toISOString()} から ${utcEndDate.toISOString()}`
+    );
+
+    // 削除処理実行（UTCタイムスタンプで検索）
+    const result = await deleteUsersByDateRange(utcStartDate, utcEndDate);
 
     if (result) {
       console.log('前日のユーザーデータの削除に成功しました');
