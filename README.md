@@ -56,6 +56,8 @@ React + TypeScript + Supabase で構築されています。
 
 2. `supabase/schema_dump.sql`を使用してデータベーステーブルを構築する
 
+**skills テーブルには、少なくとも１つ以上データを登録すること**
+
 ## セットアップ
 
 ### 必要条件
@@ -132,7 +134,8 @@ ts-card-app/
 │   ├── utils/          # ユーティリティ関数
 │   └── validations/    # バリデーションスキーマ
 └── assets/
-    └── images/         # 画像ファイル
+│   └── images/         # 画像ファイル
+└── supabase/           # DBbackup
 ```
 
 ## テスト
