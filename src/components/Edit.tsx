@@ -199,7 +199,12 @@ export const Edit = () => {
                   </Box>
                 </Box>
                 <Box>
-                  <FormLabel>名前</FormLabel>
+                  <FormLabel>
+                    名前{' '}
+                    <Text as="span" color="red.500" fontWeight="bold">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     placeholder="名前を入力"
                     {...register('name')}
@@ -215,7 +220,12 @@ export const Edit = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>自己紹介</FormLabel>
+                  <FormLabel>
+                    自己紹介{' '}
+                    <Text as="span" color="red.500" fontWeight="bold">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Textarea
                     placeholder="<h1>タグも使用可能です</h1>"
                     {...register('description')}
@@ -231,7 +241,12 @@ export const Edit = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>スキル</FormLabel>
+                  <FormLabel>
+                    スキル{' '}
+                    <Text as="span" color="red.500" fontWeight="bold">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Controller
                     name="skillIds"
                     control={control}

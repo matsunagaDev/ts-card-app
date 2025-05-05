@@ -88,7 +88,7 @@ VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-> **重要**: `.env` ファイルは `.gitignore` に追加して、実際のキーや URL が公開リポジトリにコミットされないようにしてください。
+> `.env` ファイルは `.gitignore` に追加して、実際のキーや URL が公開リポジトリにコミットされないようにしてください。
 
 4. 開発サーバーを起動する
 
@@ -137,7 +137,7 @@ ts-card-app/
 
 ## テスト
 
-テストを実行するには：
+テストを実行するには以下を実行する。
 
 ```bash
 npm run test

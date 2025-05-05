@@ -188,7 +188,12 @@ export const Register: React.FC = () => {
             <CardBody maxH={{ base: '60vh', md: 'none' }} overflow="auto">
               <Stack spacing={4}>
                 <Box>
-                  <FormLabel htmlFor="user-id-input">好きな英単語</FormLabel>
+                  <FormLabel htmlFor="user-id-input">
+                    好きな英単語{' '}
+                    <Text as="span" color="red.500" fontWeight="bold">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     id="user-id-input"
                     autoFocus
@@ -207,7 +212,12 @@ export const Register: React.FC = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel htmlFor="name-input">名前</FormLabel>
+                  <FormLabel htmlFor="name-input">
+                    名前{' '}
+                    <Text as="span" color="red.500" fontWeight="bold">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     id="name-input"
                     placeholder="名前を入力"
@@ -225,7 +235,12 @@ export const Register: React.FC = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel htmlFor="description-input">自己紹介</FormLabel>
+                  <FormLabel htmlFor="description-input">
+                    自己紹介{' '}
+                    <Text as="span" color="red.500" fontWeight="bold">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Textarea
                     id="description-input"
                     placeholder="<h1>タグも使用可能です</h1>"
@@ -243,7 +258,12 @@ export const Register: React.FC = () => {
                   )}
                 </Box>
                 <Box>
-                  <FormLabel>スキル</FormLabel>
+                  <FormLabel>
+                    スキル{' '}
+                    <Text as="span" color="red.500" fontWeight="bold">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Controller
                     name="skillIds"
                     control={control}
